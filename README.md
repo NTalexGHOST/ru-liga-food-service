@@ -1,1 +1,1 @@
-# ru-liga-food-service
+# Сервис доставки еды
