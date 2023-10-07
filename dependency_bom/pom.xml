@@ -3,18 +3,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
+		<groupId>ru.liga</groupId>
 		<artifactId>food-service</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ru.liga</groupId>
 	<artifactId>dependency_bom</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>dependency_bom</name>
 	<description>Пом зависимостей</description>
+	<packaging>pom</packaging>
 
 	<properties>
 		<spring.version>2.7.16</spring.version>
