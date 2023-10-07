@@ -19,6 +19,7 @@
 	<properties>
 		<spring.version>2.7.16</spring.version>
 		<mybatis.version>3.0.2</mybatis.version>
+		<snakeyaml.version>2.0</snakeyaml.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.plugin>3.11.0</maven.compiler.plugin>
@@ -27,6 +28,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-actuator</artifactId>
