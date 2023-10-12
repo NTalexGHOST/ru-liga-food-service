@@ -5,10 +5,6 @@ import lombok.experimental.Accessors;
 
 import java.awt.geom.Point2D;
 
-enum CourierStatus {
-    FREE, BUSY, REST
-}
-
 @Data
 @Accessors(chain = true)
 public class CourierDTO {
@@ -16,7 +12,7 @@ public class CourierDTO {
 
     private byte phone;
 
-    private CourierStatus status;
+    private ru.liga.OrderService.dto.CourierStatus status;
 
     private Point2D.Double coordinates;
 }

@@ -3,10 +3,6 @@ package ru.liga.OrderService.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-enum RestaurantStatus {
-    CLOSED, OPEN, OVERFLOWED
-}
-
 @Data
 @Accessors(chain = true)
 public class RestaurantDTO {
@@ -16,5 +12,5 @@ public class RestaurantDTO {
 
     private String address;
 
-    private RestaurantStatus status;
+    private ru.liga.OrderService.dto.RestaurantStatus status;
 }

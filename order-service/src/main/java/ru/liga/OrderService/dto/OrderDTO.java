@@ -7,12 +7,6 @@ import lombok.experimental.Accessors;
 import java.sql.Timestamp;
 import java.util.List;
 
-enum OrderStatus {
-    //  Есть ли смысл делать возможной отмену заказа (CANCELLED) пользователем
-    //  или по нашему заданию этого не предусмотрено?
-    CART, CANCELLED, REJECTED, PAID, PREPARING, COURIER, DELIVERED
-}
-
 @Data
 @Accessors(chain = true)
 public class OrderDTO {
@@ -22,7 +16,7 @@ public class OrderDTO {
 
     private RestaurantDTO restaurant;
 
-    private OrderStatus status;
+    private ru.liga.OrderService.dto.OrderStatus status;
 
     private @Nullable CourierDTO courier;
 
