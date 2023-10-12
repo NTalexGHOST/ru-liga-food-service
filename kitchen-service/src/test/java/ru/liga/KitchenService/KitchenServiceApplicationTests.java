@@ -1,10 +1,10 @@
-package ru.liga.OrderService;
+package ru.liga.KitchenService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OrderServiceApplicationTests {
+class KitchenServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
