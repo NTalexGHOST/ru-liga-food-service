@@ -1,4 +1,4 @@
-package ru.liga.OrderService.dto;
+package ru.liga.OrderService.dto.Statuses;
 
 public enum OrderStatus {
     //  Есть ли смысл делать возможной отмену заказа (CANCELLED) пользователем
