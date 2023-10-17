@@ -1,5 +1,6 @@
 package ru.liga.OrderService.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -10,9 +11,11 @@ import lombok.experimental.Accessors;
 public class OrderItemDTO {
 
     @Schema(description = "Идентификатор")
+    @JsonIgnore
     private long id;
 
     @Schema(description = "Заказ")
+    @JsonIgnore
     private OrderDTO order;
 
     @Schema(description = "Позиция в ресторане")

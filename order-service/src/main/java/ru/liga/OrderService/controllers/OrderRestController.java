@@ -3,10 +3,14 @@ package ru.liga.OrderService.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.liga.OrderService.dto.OrderDTO;
+import ru.liga.OrderService.responses.GetOrderByIdResponse;
+import ru.liga.OrderService.responses.GetOrdersResponse;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,14 +19,23 @@ import java.util.List;
 public class OrderRestController {
 
     //  Заглушка для хранения данных
-    HashMap<Long, OrderDTO> orders = new HashMap<>();
+    List<OrderDTO> orders = new ArrayList<>();
 
     @Operation(summary = "Возврат списка заказов")
     @GetMapping("/orders")
-    public List<OrderDTO> getOrders() {
-        if (orders.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<GetOrdersResponse> getOrders() {
+        GetOrdersResponse response;
 
-        return (List<OrderDTO>) orders.values();
+        try {
+            response = new GetOrdersResponse(orders);
+        } catch (Exception e) {
+            response = new GetOrdersResponse();
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /*
@@ -34,16 +47,17 @@ public class OrderRestController {
     */
     @Operation(summary = "Возврат заказа по его id")
     @GetMapping("/order/{id}")
-    public OrderDTO getOrderById(@PathVariable("id") Long id) {
-        if (orders.get(id) == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    public ResponseEntity<GetOrderByIdResponse> getOrderById(@PathVariable("id") Long id) {
+        //  Допустим здесь происходит поиск по id в репозитории
+        GetOrderByIdResponse response = new GetOrderByIdResponse(new OrderDTO());
 
-        return orders.get(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "Создание заказа")
     @PostMapping("/order")
     public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
-        orders.put(orderDTO.getId(), orderDTO);
+        orders.add(orderDTO);
 
         return orderDTO;
     }

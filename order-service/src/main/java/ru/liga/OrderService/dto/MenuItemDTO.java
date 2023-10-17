@@ -1,5 +1,6 @@
 package ru.liga.OrderService.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -12,19 +13,23 @@ import java.util.Base64;
 public class MenuItemDTO {
 
     @Schema(description = "Идентификатор")
+    @JsonIgnore
     private long id;
 
     @Schema(description = "Ресторан")
+    @JsonIgnore
     private RestaurantDTO restaurant;
 
     @Schema(description = "Название ресторана")
+    @JsonIgnore
     private String name;
 
     @Schema(description = "Цена позиции")
+    @JsonIgnore
     private float price;
 
     @Schema(description = "Фотография позиции в Base64")
-    private Base64 image;
+    private String image;
 
     @Schema(description = "Описание позиции")
     private String description;

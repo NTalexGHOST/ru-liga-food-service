@@ -1,5 +1,6 @@
 package ru.liga.OrderService.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micrometer.core.lang.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class OrderDTO {
     private long id;
 
     @Schema(description = "Покупатель")
+    @JsonIgnore
     private CustomerDTO customer;
 
     @Schema(description = "Ресторан")
@@ -28,6 +30,7 @@ public class OrderDTO {
     private OrderStatus status;
 
     @Schema(description = "Курьер")
+    @JsonIgnore
     private @Nullable CourierDTO courier;
 
     @Schema(description = "Время заказа")
