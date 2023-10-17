@@ -10,8 +10,6 @@ import ru.liga.OrderService.responses.GetOrderByIdResponse;
 import ru.liga.OrderService.responses.GetOrdersResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 @Tag(name = "Контроллер для работы с заказами")
@@ -47,9 +45,20 @@ public class OrderRestController {
     */
     @Operation(summary = "Возврат заказа по его id")
     @GetMapping("/order/{id}")
-    public ResponseEntity<GetOrderByIdResponse> getOrderById(@PathVariable("id") Long id) {
-        //  Допустим здесь происходит поиск по id в репозитории
-        GetOrderByIdResponse response = new GetOrderByIdResponse(new OrderDTO());
+    //  Не совсем уверен насколько верно использовать неопределенный ResponseEntity
+    public ResponseEntity getOrderById(@PathVariable("id") Long id) {
+        GetOrderByIdResponse response;
+
+        try {
+            //  Допустим здесь происходит поиск по id в репозитории
+            OrderDTO order = new OrderDTO();
+            //  При этом репозиторий возвращает Optional и выполняем проверку на Null (isPresent)
+            if (order == null) return new ResponseEntity<>("404 Not Found", HttpStatus.NOT_FOUND);
+
+            response = new GetOrderByIdResponse(order);
+        } catch (Exception e) {
+            return new ResponseEntity<>("500 Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
