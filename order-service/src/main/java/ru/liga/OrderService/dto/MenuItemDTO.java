@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.util.Base64;
 
 @Schema(description = "Сущность позиции в ресторане")
@@ -26,7 +27,7 @@ public class MenuItemDTO {
 
     @Schema(description = "Цена позиции")
     @JsonIgnore
-    private float price;
+    private BigDecimal price;
 
     @Schema(description = "Фотография позиции в Base64")
     private String image;

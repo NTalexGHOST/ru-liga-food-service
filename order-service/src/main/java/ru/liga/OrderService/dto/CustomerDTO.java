@@ -13,7 +13,7 @@ public class CustomerDTO {
     private long id;
 
     @Schema(description = "Номер телефона")
-    private byte phone;
+    private String phone;
 
     @Schema(description = "Электронная почта")
     private String email;

@@ -46,7 +46,7 @@ public class OrderRestController {
     @Operation(summary = "Возврат заказа по его id")
     @GetMapping("/order/{id}")
     //  Не совсем уверен насколько верно использовать неопределенный ResponseEntity
-    public ResponseEntity getOrderById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getOrderById(@PathVariable("id") Long id) {
         GetOrderByIdResponse response;
 
         try {

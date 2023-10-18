@@ -16,7 +16,7 @@ public class CourierDTO {
     private long id;
 
     @Schema(description = "Номер телефона")
-    private byte phone;
+    private String phone;
 
     @Schema(description = "Статус курьера", allowableValues = { "FREE", "BUSY", "REST" })
     private CourierStatus status;
