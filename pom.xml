@@ -22,6 +22,7 @@
 		<module>kitchen-service</module>
 		<module>delivery-service</module>
 		<module>notification-service</module>
+		<module>migration</module>
 		<module>dependency_bom</module>
 	</modules>
 
