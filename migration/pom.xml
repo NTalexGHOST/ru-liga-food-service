@@ -14,7 +14,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>migration</name>
     <description>Миграционный модуль БД</description>
-    <packaging>jar</packaging>
 
 
 
@@ -29,5 +28,42 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <configuration>
+                    <changelogSchemaName>${profile.changelogSchemaName}</changelogSchemaName>
+                    <propertyFile>${profile.propertyFile}</propertyFile>
+                    <changeLogFile>${profile.changeLogFile}</changeLogFile>
+                    <dataDir>${profile.dataDir}</dataDir>
+                    <verbose>${profile.verbose}</verbose>
+                    <logging>${profile.logging}</logging>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>local</value>
+                </property>
+            </activation>
+            <properties>
+                <profile.propertyFile>src/main/resources/db/local/liquibase.properties</profile.propertyFile>
+                <profile.changeLogFile>src/main/resources/db/master.xml</profile.changeLogFile>
+                <profile.dataDir>src/main/resources/db/local/data</profile.dataDir>
+                <profile.verbose>false</profile.verbose>
+                <profile.logging>debug</profile.logging>
+                <profile.changelogSchemaName>public</profile.changelogSchemaName>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
