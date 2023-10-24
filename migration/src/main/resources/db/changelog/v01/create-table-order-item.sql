@@ -8,7 +8,7 @@ create table if not exists order_item
     price decimal not null,
     quantity smallint not null,
     constraint order_item_pk primary key (id),
-    constraint order_fk foreign key(order_id) references order(id)
+    constraint order_fk foreign key(order_id) references customer_order(id)
 );
 
 comment on table order_item is 'Сущность позиции в заказе';

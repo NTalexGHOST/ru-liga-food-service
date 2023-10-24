@@ -1,8 +1,8 @@
-create sequence if not exists order_seq;
+create sequence if not exists customer_order_seq;
 
-create table if not exists order
+create table if not exists customer_order
 (
-    id bigint not null default nextval('order_seq'),
+    id bigint not null default nextval('customer_order_seq'),
     customer_id bigint not null,
     restaurant_id bigint not null,
     status varchar(64) not null,
@@ -14,10 +14,10 @@ create table if not exists order
     constraint courier_fk foreign key(courier_id) references courier(id)
 );
 
-comment on table order is 'Сущность заказа';
-comment on column order.id is 'Идентификатор';
-comment on column order.customer_id is 'Идентификатор покупателя';
-comment on column order.restaurant_id is 'Идентификатор ресторана';
-comment on column order.status is 'Статус';
-comment on column order.courier_id is 'Идентификатор курьера';
-comment on column order.timestamp is 'Время заказа';
+comment on table customer_order is 'Сущность заказа';
+comment on column customer_order.id is 'Идентификатор';
+comment on column customer_order.customer_id is 'Идентификатор покупателя';
+comment on column customer_order.restaurant_id is 'Идентификатор ресторана';
+comment on column customer_order.status is 'Статус';
+comment on column customer_order.courier_id is 'Идентификатор курьера';
+comment on column customer_order.timestamp is 'Время заказа';
