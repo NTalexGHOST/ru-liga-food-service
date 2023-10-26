@@ -3,9 +3,9 @@ create sequence if not exists customer_seq;
 create table if not exists customer
 (
     id bigint not null default nextval('customer_seq'),
-    phone varchar(15) not null,
+    phone varchar(32) not null,
     email varchar(64) not null,
-    address text,
+    address point,
     constraint customer_pk primary key (id)
 );
 

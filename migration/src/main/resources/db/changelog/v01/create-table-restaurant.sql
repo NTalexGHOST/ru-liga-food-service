@@ -4,7 +4,7 @@ create table if not exists restaurant
 (
     id bigint not null default nextval('restaurant_seq'),
     name varchar(64) not null,
-    address text not null,
+    address point not null,
     status varchar(64) not null,
     constraint restaurant_pk primary key (id)
 );
