@@ -1,13 +1,16 @@
 package ru.liga.common.entities;
 
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import ru.liga.common.statuses.CourierStatus;
 
 import javax.persistence.*;
 
 @Entity(name = "courier")
-@Accessors(chain = true)
+@Data
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Courier {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -1,14 +1,15 @@
 package ru.liga.common.entities;
 
-import lombok.experimental.Accessors;
-import ru.liga.common.statuses.CourierStatus;
+import lombok.*;
 
 import javax.persistence.*;
-import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 
 @Entity(name = "order_item")
-@Accessors(chain = true)
+@Data
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

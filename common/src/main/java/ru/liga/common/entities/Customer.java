@@ -1,11 +1,14 @@
 package ru.liga.common.entities;
 
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity(name = "customer")
-@Accessors(chain = true)
+@Data
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -1,13 +1,16 @@
 package ru.liga.common.entities;
 
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import ru.liga.common.statuses.RestaurantStatus;
 
 import javax.persistence.*;
 
 @Entity(name = "restaurant")
-@Accessors(chain = true)
+@Data
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -1,8 +1,6 @@
 package ru.liga.common.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import ru.liga.common.statuses.OrderStatus;
 
@@ -10,9 +8,10 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity(name = "customer_order")
-@Accessors(chain = true)
-@AllArgsConstructor
+@Data
+@Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
