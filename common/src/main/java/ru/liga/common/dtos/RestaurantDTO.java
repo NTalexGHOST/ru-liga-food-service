@@ -2,16 +2,17 @@ package ru.liga.common.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import ru.liga.common.statuses.RestaurantStatus;
 
-import java.awt.geom.Point2D;
-
 @Schema(description = "DTO ресторана")
 @Data
-@Accessors(chain = true)
+@Getter @Setter
+@AllArgsConstructor
 public class RestaurantDTO {
 
     @Schema(description = "Идентификатор")
@@ -24,7 +25,7 @@ public class RestaurantDTO {
 
     @Schema(description = "Координаты")
     @JsonProperty("address")
-    private Point2D.Double address;
+    private String address;
 
     @Schema(description = "Статус ресторана", allowableValues = { "CLOSED", "OPEN" })
     @JsonProperty("status")

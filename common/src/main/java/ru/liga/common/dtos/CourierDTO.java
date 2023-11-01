@@ -2,16 +2,17 @@ package ru.liga.common.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import ru.liga.common.statuses.CourierStatus;
 
-import java.awt.geom.Point2D;
-
 @Schema(description = "DTO курьера")
 @Data
-@Accessors(chain = true)
+@Getter @Setter
+@AllArgsConstructor
 public class CourierDTO {
 
     @Schema(description = "Идентификатор")
@@ -26,5 +27,5 @@ public class CourierDTO {
     private CourierStatus status;
 
     @Schema(description = "Координаты")
-    private Point2D.Double coordinates;
+    private String coordinates;
 }

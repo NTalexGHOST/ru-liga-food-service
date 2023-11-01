@@ -1,15 +1,18 @@
 package ru.liga.common.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import ru.liga.common.statuses.CourierStatus;
+
 import ru.liga.common.statuses.OrderStatus;
 
 import javax.persistence.*;
-import java.awt.geom.Point2D;
 import java.sql.Timestamp;
 
 @Entity(name = "customer_order")
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -29,7 +32,7 @@ public class CustomerOrder {
 
     @ManyToOne
     @JoinColumn(name = "courier_id")
-    private Courier courier;
+    private Courier courier = null;
 
     @Column(name = "timestamp")
     private Timestamp timestamp;
