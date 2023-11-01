@@ -1,37 +1,38 @@
-package ru.liga.OrderService.dto;
+package ru.liga.common.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.util.Base64;
 
-@Schema(description = "Сущность позиции в ресторане")
+@Schema(description = "DTO позиции в ресторане")
 @Data
 @Accessors(chain = true)
 public class MenuItemDTO {
 
     @Schema(description = "Идентификатор")
-    @JsonIgnore
+    @JsonProperty("id")
     private long id;
 
     @Schema(description = "Ресторан")
-    @JsonIgnore
+    @JsonProperty("restaurant")
     private RestaurantDTO restaurant;
 
     @Schema(description = "Название ресторана")
-    @JsonIgnore
+    @JsonProperty("name")
     private String name;
 
     @Schema(description = "Цена позиции")
-    @JsonIgnore
+    @JsonProperty("price")
     private BigDecimal price;
 
-    @Schema(description = "Фотография позиции в Base64")
+    @Schema(description = "Путь до фотографии")
+    @JsonProperty("image")
     private String image;
 
     @Schema(description = "Описание позиции")
+    @JsonProperty("description")
     private String description;
 }
