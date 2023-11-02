@@ -2,18 +2,15 @@ package ru.liga.common.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import ru.liga.common.dtos.OrderDTO;
 
 import java.util.List;
 
 @Schema(description = "DTO для вывода всех заказов")
-@Data
-@Accessors(chain = true)
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class AllOrdersResponse {
 
     @Schema(description = "Коллекция заказов")
