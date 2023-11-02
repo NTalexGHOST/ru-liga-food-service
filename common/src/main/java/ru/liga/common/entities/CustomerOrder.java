@@ -6,6 +6,7 @@ import ru.liga.common.statuses.OrderStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity(name = "customer_order")
 @Data
@@ -35,4 +36,8 @@ public class CustomerOrder {
 
     @Column(name = "timestamp")
     private Timestamp timestamp;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> orderItems;
 }

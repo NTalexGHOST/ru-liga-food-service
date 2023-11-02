@@ -1,5 +1,6 @@
 package ru.liga.common.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -7,22 +8,11 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Schema(description = "DTO позиции в заказе")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class OrderItemDTO {
 
-    @Schema(description = "Идентификатор")
-    @JsonProperty("id")
-    private long id;
-
-    @Schema(description = "Заказ")
-    @JsonProperty("order")
-    private OrderDTO order;
-
-    @Schema(description = "Позиция в ресторане")
-    @JsonProperty("menuItem")
+    @JsonIgnore
     private MenuItemDTO menuItem;
 
     @Schema(description = "Цена в момент заказа")
@@ -32,4 +22,12 @@ public class OrderItemDTO {
     @Schema(description = "Количество")
     @JsonProperty("quantity")
     private byte quantity;
+
+    @Schema(description = "Описание позиции")
+    @JsonProperty("description")
+    private String description;
+
+    @Schema(description = "Путь до фотографии")
+    @JsonProperty("image")
+    private String image;
 }

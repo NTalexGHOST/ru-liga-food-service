@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import ru.liga.common.dtos.OrderDTO;
-import ru.liga.common.dtos.RestaurantDTO;
 import ru.liga.common.entities.CustomerOrder;
-import ru.liga.common.entities.Restaurant;
-import ru.liga.common.mappers.AllOrdersMapper;
+import ru.liga.common.exceptions.NoOrdersException;
+import ru.liga.common.exceptions.OrderNotFoundException;
+import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.CustomerOrderRepository;
 import ru.liga.common.repos.RestaurantRepository;
 import ru.liga.common.responses.AllOrdersResponse;
@@ -24,15 +24,14 @@ import java.util.Optional;
 public class OrderService {
 
     private final CustomerOrderRepository orderRepo;
-    private final RestaurantRepository restaurantRepo;
-    private final AllOrdersMapper allOrdersMapper;
+    private final OrderMapper orderMapper;
 
     public AllOrdersResponse getAllOrders() {
 
         List<CustomerOrder> orderEntities = orderRepo.findAll();
-        if (orderEntities.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
 
-        List<OrderDTO> orderDTOs = allOrdersMapper.ordersToOrderDTOs(orderEntities);
+        List<OrderDTO> orderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
         AllOrdersResponse response = new AllOrdersResponse(orderDTOs, 0, 10);
 
         return response;
@@ -43,8 +42,8 @@ public class OrderService {
         CustomerOrder order;
         Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
         if (optionalOrder.isPresent()) order = optionalOrder.get();
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
 
-        return allOrdersMapper.orderToOrderDTO(order);
+        return orderMapper.orderToOrderDTO(order);
     }
 }

@@ -7,27 +7,9 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Schema(description = "DTO позиции в ресторане")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class MenuItemDTO {
-
-    @Schema(description = "Идентификатор")
-    @JsonProperty("id")
-    private long id;
-
-    @Schema(description = "Ресторан")
-    @JsonProperty("restaurant")
-    private RestaurantDTO restaurant;
-
-    @Schema(description = "Название ресторана")
-    @JsonProperty("name")
-    private String name;
-
-    @Schema(description = "Цена позиции")
-    @JsonProperty("price")
-    private BigDecimal price;
 
     @Schema(description = "Путь до фотографии")
     @JsonProperty("image")

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.liga.OrderService.services.OrderService;
 import ru.liga.common.dtos.OrderDTO;
-import ru.liga.common.dtos.RestaurantDTO;
 import ru.liga.common.responses.AllOrdersResponse;
 
 @Tag(name = "Контроллер для работы с заказами")
@@ -30,10 +29,7 @@ public class OrderRestController {
     public OrderDTO getOrderById(@PathVariable("id") Long id) { return orderService.findOrderById(id); }
 
     /*@Operation(summary = "Создание заказа")
-    @PostMapping("/")
-    public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
-        orders.add(orderDTO);
-
-        return orderDTO;
-    }*/
+    @GetMapping("/order")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDTO createOrder(@PathVariable("id") Long id) { return orderService.create(id); }*/
 }
