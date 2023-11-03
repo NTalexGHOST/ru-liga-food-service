@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import ru.liga.OrderService.services.OrderService;
+import ru.liga.common.dtos.CreateOrderDTO;
 import ru.liga.common.dtos.OrderDTO;
 import ru.liga.common.responses.AllOrdersResponse;
+import ru.liga.common.responses.CreateOrderResponse;
 
 @Tag(name = "Контроллер для работы с заказами")
 @RestController
@@ -21,15 +23,24 @@ public class OrderRestController {
     @Operation(summary = "Возврат списка заказов")
     @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
-    public AllOrdersResponse getAllOrders() { return orderService.getAllOrders(); }
+    public AllOrdersResponse getAllOrders() {
+
+        return orderService.getAllOrders();
+    }
 
     @Operation(summary = "Возврат заказа по его id")
     @GetMapping("/order/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDTO getOrderById(@PathVariable("id") Long id) { return orderService.findOrderById(id); }
+    public OrderDTO getOrderById(@PathVariable("id") Long id) {
 
-    /*@Operation(summary = "Создание заказа")
-    @GetMapping("/order")
+        return orderService.findOrderById(id);
+    }
+
+    @Operation(summary = "Создание заказа")
+    @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO createOrder(@PathVariable("id") Long id) { return orderService.create(id); }*/
+    public CreateOrderResponse createOrder(@RequestBody CreateOrderDTO orderDTO) {
+
+        return orderService.createOrder(orderDTO);
+    }
 }

@@ -1,10 +1,10 @@
 package ru.liga.common.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Schema(description = "DTO заказа")
@@ -12,19 +12,11 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 public class CreateOrderDTO {
 
-    @Schema(description = "Идентификатор")
-    @JsonProperty("id")
-    private long id;
-
-    @Schema(description = "Ресторан")
-    @JsonProperty("restaurant")
-    private RestaurantNameDTO restaurant;
-
-    @Schema(description = "Время заказа")
-    @JsonProperty("timestamp")
-    private Timestamp timestamp;
+    @Schema(description = "Идентификатор ресторана")
+    @JsonProperty("restaurant_id")
+    private long restaurantId;
 
     @Schema(description = "Позиции в заказе")
-    @JsonProperty("items")
-    private List<OrderItemDTO> items;
+    @JsonProperty("menu_items")
+    private List<OrderItemForCreateOrderDTO> items;
 }

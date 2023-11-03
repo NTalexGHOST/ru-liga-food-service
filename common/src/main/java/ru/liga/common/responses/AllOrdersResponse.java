@@ -15,7 +15,7 @@ public class AllOrdersResponse {
 
     @Schema(description = "Коллекция заказов")
     @JsonProperty("orders")
-    private List<OrderDTO> orders;
+    private List<OrderDTO> orders = null;
 
     @JsonProperty("page_index")
     private int pageIndex = 0;
