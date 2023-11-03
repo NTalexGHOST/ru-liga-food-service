@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Courier {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "phone")
