@@ -111,10 +111,12 @@ public class OrderService {
 
 
         orderRepo.save(order);
+        LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
 
-        //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp
-        //  с часовым поясом и после парсить в часы и минуты для ответа
+        //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp с часовым
+        //  поясом и после парсить в часы и минуты для ответа.
+        //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до ресторана
         return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
-                LocalTime.now().plusMinutes(30).toString());
+                estimatedTime.getHour() + ":" + estimatedTime.getMinute());
     }
 }
