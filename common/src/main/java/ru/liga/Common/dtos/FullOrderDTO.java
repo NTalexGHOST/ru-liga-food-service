@@ -10,7 +10,7 @@ import java.util.List;
 @Schema(description = "DTO заказа")
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class OrderDTO {
+public class FullOrderDTO {
 
     @Schema(description = "Идентификатор")
     @JsonProperty("id")

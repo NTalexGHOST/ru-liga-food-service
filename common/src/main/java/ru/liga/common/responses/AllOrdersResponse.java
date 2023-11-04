@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import ru.liga.common.dtos.OrderDTO;
+import ru.liga.common.dtos.FullOrderDTO;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class AllOrdersResponse {
 
     @Schema(description = "Коллекция заказов")
     @JsonProperty("orders")
-    private List<OrderDTO> orders = null;
+    private List<FullOrderDTO> orders = null;
 
     @JsonProperty("page_index")
     private int pageIndex = 0;

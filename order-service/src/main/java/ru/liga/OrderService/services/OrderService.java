@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.CreateOrderDTO;
-import ru.liga.common.dtos.OrderDTO;
+import ru.liga.common.dtos.ShortOrderDTO;
+import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
 import ru.liga.common.mappers.OrderMapper;
@@ -42,13 +42,13 @@ public class OrderService {
         List<CustomerOrder> orderEntities = orderRepo.findAll();
         if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
 
-        List<OrderDTO> orderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
-        AllOrdersResponse response = new AllOrdersResponse(orderDTOs, 0, 10);
+        List<FullOrderDTO> fullOrderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
+        AllOrdersResponse response = new AllOrdersResponse(fullOrderDTOs, 0, 10);
 
         return response;
     }
 
-    public OrderDTO findOrderById(long id) {
+    public FullOrderDTO findOrderById(long id) {
 
         CustomerOrder order;
         Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
@@ -58,7 +58,7 @@ public class OrderService {
         return orderMapper.orderToOrderDTO(order);
     }
 
-    public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {
+    public CreateOrderResponse createOrder(ShortOrderDTO orderDTO) {
 
         CustomerOrder order = new CustomerOrder();
         Restaurant restaurant; long restaurantId = orderDTO.getRestaurantId();

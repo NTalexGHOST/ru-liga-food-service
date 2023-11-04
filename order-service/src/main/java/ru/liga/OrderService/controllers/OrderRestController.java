@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import ru.liga.OrderService.services.OrderService;
-import ru.liga.common.dtos.CreateOrderDTO;
-import ru.liga.common.dtos.OrderDTO;
+import ru.liga.common.dtos.ShortOrderDTO;
+import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.responses.AllOrdersResponse;
 import ru.liga.common.responses.CreateOrderResponse;
 
@@ -31,7 +31,7 @@ public class OrderRestController {
     @Operation(summary = "Возврат заказа по его id")
     @GetMapping("/order/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDTO getOrderById(@PathVariable("id") Long id) {
+    public FullOrderDTO getOrderById(@PathVariable("id") Long id) {
 
         return orderService.findOrderById(id);
     }
@@ -39,7 +39,7 @@ public class OrderRestController {
     @Operation(summary = "Создание заказа")
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateOrderResponse createOrder(@RequestBody CreateOrderDTO orderDTO) {
+    public CreateOrderResponse createOrder(@RequestBody ShortOrderDTO orderDTO) {
 
         return orderService.createOrder(orderDTO);
     }

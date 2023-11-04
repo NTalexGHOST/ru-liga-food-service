@@ -10,7 +10,7 @@ import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.exceptions.OrderCreateFailedException;
 import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.responses.AllOrdersResponse;
-import ru.liga.common.responses.ErrorResponse;
+import ru.liga.common.responses.CodeResponse;
 
 @ControllerAdvice
 public class OrderExceptionHandler {
@@ -18,9 +18,9 @@ public class OrderExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(OrderNotFoundException.class)
     @ResponseBody
-    public ErrorResponse handleOrderNotFoundException(OrderNotFoundException e) {
+    public CodeResponse handleOrderNotFoundException(OrderNotFoundException e) {
 
-        return new ErrorResponse("404 Not Found", e.getMessage());
+        return new CodeResponse("404 Not Found", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -34,8 +34,8 @@ public class OrderExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(OrderCreateFailedException.class)
     @ResponseBody
-    public ErrorResponse handleOrderCreateFailedException(OrderCreateFailedException e) {
+    public CodeResponse handleOrderCreateFailedException(OrderCreateFailedException e) {
 
-        return new ErrorResponse("505 Internal Server Error", e.getMessage());
+        return new CodeResponse("505 Internal Server Error", e.getMessage());
     }
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Schema(description = "DTO для вывода исключений")
 @Data @Getter @Setter
 @AllArgsConstructor
-public class ErrorResponse {
+public class CodeResponse {
 
     @Schema(description = "Код ошибки")
     @JsonProperty("code")

@@ -7,7 +7,7 @@ import lombok.*;
 @Schema(description = "DTO позиции при создании заказа")
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class OrderItemForCreateOrderDTO {
+public class ShortOrderItemDTO {
 
     @Schema(description = "Количество")
     @JsonProperty("quantity")
