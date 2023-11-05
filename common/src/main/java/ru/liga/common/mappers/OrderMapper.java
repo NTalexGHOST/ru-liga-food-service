@@ -3,6 +3,7 @@ package ru.liga.common.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import ru.liga.common.dtos.DeliveryOrderDTO;
 import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
 import ru.liga.common.dtos.RestaurantOrderDTO;
@@ -11,7 +12,7 @@ import ru.liga.common.entities.OrderItem;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = { RestaurantMapper.class })
+@Mapper(componentModel = "spring", uses = { RestaurantMapper.class, CustomerMapper.class })
 public interface OrderMapper {
 
     @Mapping(target = "items", source = "orderItems")
@@ -25,5 +26,8 @@ public interface OrderMapper {
     @Mapping(target = "description", source = "menuItem.description")
     @Mapping(target = "image", source = "menuItem.image")
     OrderItemDTO orderItemToOrderItemDTO(OrderItem orderItem);
-    List<OrderItemDTO> orderItemsToOrderItemDTOs(List<OrderItem> orderItems);
+    List<OrderItemDTO> ordersItemsToOrderItemDTOs(List<OrderItem> orderItems);
+
+    DeliveryOrderDTO orderToDeliveryOrderDTO(CustomerOrder order);
+    List<DeliveryOrderDTO> ordersToDeliveryOrderDTOs(List<CustomerOrder> orders);
 }

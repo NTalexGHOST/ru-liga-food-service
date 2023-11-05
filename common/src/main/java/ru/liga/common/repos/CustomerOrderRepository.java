@@ -16,6 +16,7 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     Optional<CustomerOrder> findFirstById(long id);
 
     List<CustomerOrder> findAll();
+    List<CustomerOrder> findAllByStatus(OrderStatus status);
     List<CustomerOrder> findAllByCustomer(Customer customer);
     List<CustomerOrder> findAllByCustomerAndStatus(Customer customer, OrderStatus status);
     List<CustomerOrder> findAllByRestaurantAndStatus(Restaurant restaurant, OrderStatus status);

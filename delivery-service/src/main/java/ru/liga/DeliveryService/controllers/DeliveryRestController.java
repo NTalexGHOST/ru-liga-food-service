@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.liga.DeliveryService.services.DeliveryService;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.CodeResponse;
+import ru.liga.common.responses.DeliveryOrdersResponse;
 
 @Tag(name = "Контроллер сервиса доставки")
 @RestController
@@ -24,5 +25,13 @@ public class DeliveryRestController {
     public CodeResponse changeDeliveryStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
 
         return deliveryService.changeDeliveryStatus(id, statusDTO);
+    }
+
+    @Operation(summary = "Смена статуса заявки")
+    @PostMapping("/deliveries")
+    @ResponseStatus(HttpStatus.OK)
+    public DeliveryOrdersResponse getAllDeliveries(@RequestBody OrderStatusDTO statusDTO) {
+
+        return deliveryService.findAllDeliveries(statusDTO);
     }
 }
