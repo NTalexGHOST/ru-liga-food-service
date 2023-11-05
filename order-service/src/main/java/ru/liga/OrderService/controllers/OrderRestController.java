@@ -25,7 +25,7 @@ public class OrderRestController {
     @ResponseStatus(HttpStatus.OK)
     public AllOrdersResponse getAllOrders() {
 
-        return orderService.getAllOrders();
+        return orderService.findAllOrders();
     }
 
     @Operation(summary = "Возврат заказа по его id")

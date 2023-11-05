@@ -37,15 +37,14 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
 
-    public AllOrdersResponse getAllOrders() {
+    public AllOrdersResponse findAllOrders() {
 
         List<CustomerOrder> orderEntities = orderRepo.findAll();
         if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
 
         List<FullOrderDTO> fullOrderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
-        AllOrdersResponse response = new AllOrdersResponse(fullOrderDTOs, 0, 10);
 
-        return response;
+        return new AllOrdersResponse(fullOrderDTOs, 0, 10);
     }
 
     public FullOrderDTO findOrderById(long id) {
