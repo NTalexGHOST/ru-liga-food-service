@@ -3,10 +3,7 @@ package ru.liga.common.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import ru.liga.common.dtos.DeliveryOrderDTO;
-import ru.liga.common.dtos.FullOrderDTO;
-import ru.liga.common.dtos.OrderItemDTO;
-import ru.liga.common.dtos.RestaurantOrderDTO;
+import ru.liga.common.dtos.*;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.entities.OrderItem;
 
@@ -26,7 +23,13 @@ public interface OrderMapper {
     @Mapping(target = "description", source = "menuItem.description")
     @Mapping(target = "image", source = "menuItem.image")
     OrderItemDTO orderItemToOrderItemDTO(OrderItem orderItem);
-    List<OrderItemDTO> ordersItemsToOrderItemDTOs(List<OrderItem> orderItems);
+    List<OrderItemDTO> orderItemsToOrderItemDTOs(List<OrderItem> orderItems);
+
+    @Mapping(target = "name", source = "menuItem.name")
+    @Mapping(target = "description", source = "menuItem.description")
+    @Mapping(target = "image", source = "menuItem.image")
+    FullOrderItemDTO orderItemToFullOrderItemDTO(OrderItem orderItem);
+    List<FullOrderItemDTO> orderItemsToFullOrderItemDTOs(List<OrderItem> orderItems);
 
     DeliveryOrderDTO orderToDeliveryOrderDTO(CustomerOrder order);
     List<DeliveryOrderDTO> ordersToDeliveryOrderDTOs(List<CustomerOrder> orders);

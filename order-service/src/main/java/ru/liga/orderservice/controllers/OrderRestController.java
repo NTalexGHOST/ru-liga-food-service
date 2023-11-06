@@ -29,7 +29,7 @@ public class OrderRestController {
         return orderService.getAllOrders();
     }
 
-    @Operation(summary = "Возврат списка заказов")
+    @Operation(summary = "Возврат списка заказов покупателя")
     @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
     public CustomerOrdersResponse getAllOrdersByCustomer() {

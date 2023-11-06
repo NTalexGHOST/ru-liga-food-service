@@ -143,10 +143,67 @@ public class OrderService {
 
         //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp с часовым
         //  поясом и после парсить в часы и минуты для ответа.
-        //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до ресторана
+        //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до ресторана,
+        //  ну и плюс к этому какое-нибудь среднее время приготовления заказа
         LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
 
         return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
                 estimatedTime.getHour() + ":" + estimatedTime.getMinute());
     }
+
+    /*  Старый метод создания заказа
+    public CreateOrderResponse createOrder(ShortOrderDTO orderDTO) {
+
+        CustomerOrder order = new CustomerOrder();
+        Restaurant restaurant; long restaurantId = orderDTO.getRestaurantId();
+
+
+        Customer customer;
+        Optional<Customer> optionalCustomer = customerRepo.findFirstById(1);
+        customer = optionalCustomer.get();
+        order.setCustomer(customer);
+
+
+        order.setStatus(OrderStatus.CUSTOMER_CREATED);
+        order.setTimestamp(new Timestamp(new Date().getTime()));
+
+
+        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(restaurantId);
+        if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
+        else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");
+        if (restaurant.getStatus().equals(RestaurantStatus.CLOSED))
+            throw new RestaurantClosedException("Ресторан с идентификатором " + restaurantId + " не работает");
+
+        order.setRestaurant(restaurant);
+        orderRepo.saveAndFlush(order);
+
+
+        orderDTO.getItems().forEach(orderItemDTO -> {
+            OrderItem orderItem = new OrderItem();
+
+            MenuItem menuItem; long menuItemId = orderItemDTO.getMenuItemId();
+            Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(menuItemId);
+            if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
+            else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + menuItemId + " не найдена");
+
+            orderItem.setOrder(order);
+            orderItem.setMenuItem(menuItem);
+            orderItem.setPrice(menuItem.getPrice());
+            orderItem.setQuantity(orderItemDTO.getQuantity());
+
+            orderItemRepo.save(orderItem);
+        });
+
+
+        order.setCourier(courierRepo.findFirstById(1).get());
+
+
+        orderRepo.save(order);
+
+
+        LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
+
+        return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
+                estimatedTime.getHour() + ":" + estimatedTime.getMinute());
+    } */
 }

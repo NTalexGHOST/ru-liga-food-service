@@ -12,7 +12,7 @@ import ru.liga.common.responses.RestaurantMenuResponse;
 import ru.liga.kitchenservice.dtos.MenuItemPriceDTO;
 import ru.liga.kitchenservice.services.MenuItemService;
 
-@Tag(name = "Контроллер сервиса доставки")
+@Tag(name = "Контроллер для работы с позициями меню")
 @RestController
 @RequestMapping("kitchen-service")
 @RequiredArgsConstructor
@@ -21,15 +21,15 @@ public class MenuItemRestController {
     private final MenuItemService menuItemService;
 
     @Operation(summary = "Полное меню ресторана")
-    @GetMapping("/menu")
+    @GetMapping("/menu/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RestaurantMenuResponse getMenu() {
+    public RestaurantMenuResponse getMenuByRestaurantId(@PathVariable("id") Long id) {
 
-        return menuItemService.getMenu();
+        return menuItemService.getMenuByRestaurantId(id);
     }
 
     @Operation(summary = "Получение позиции меню")
-    @GetMapping("/menu/{id}")
+    @GetMapping("/menu-item/{id}")
     @ResponseStatus(HttpStatus.OK)
     public FullMenuItemDTO getMenuItemById(@PathVariable("id") Long id) {
 
@@ -37,15 +37,15 @@ public class MenuItemRestController {
     }
 
     @Operation(summary = "Создание позиции меню")
-    @PostMapping("/menu")
+    @PostMapping("/menu-item")
     @ResponseStatus(HttpStatus.OK)
     public CodeResponse createMenuItem(@RequestBody FullMenuItemDTO menuItemDTO) {
 
         return menuItemService.createMenuItem(menuItemDTO);
     }
 
-    @Operation(summary = "Создание позиции меню")
-    @DeleteMapping("/menu/{id}")
+    @Operation(summary = "Удаление позиции меню")
+    @DeleteMapping("/menu-item/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CodeResponse deleteMenuItem(@PathVariable("id") Long id) {
 
@@ -53,7 +53,7 @@ public class MenuItemRestController {
     }
 
     @Operation(summary = "Изменение цены позиции меню")
-    @PutMapping("/menu/{id}/price")
+    @PutMapping("/menu-item/{id}/price")
     @ResponseStatus(HttpStatus.OK)
     public CodeResponse changeMenuItemPrice(@PathVariable("id") Long id, @RequestBody MenuItemPriceDTO priceDTO) {
 

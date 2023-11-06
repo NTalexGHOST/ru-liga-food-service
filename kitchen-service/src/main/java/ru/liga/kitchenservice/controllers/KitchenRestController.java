@@ -10,7 +10,7 @@ import ru.liga.kitchenservice.services.KitchenService;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.RestaurantOrdersResponse;
 
-@Tag(name = "Контроллер сервиса доставки")
+@Tag(name = "Контроллер для работы с рестораном")
 @RestController
 @RequestMapping("kitchen-service")
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class KitchenRestController {
 
     //  URL /orders?status=active/complete/denied решено было изменить на /orders с передачей OrderStatusDTO
     @Operation(summary = "Получение всех заказов ресторана с соответствующим статусом")
-    @PostMapping("/orders")
+    @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
     public RestaurantOrdersResponse getAllOrders(@RequestBody OrderStatusDTO statusDTO) {
 
