@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.exceptions.OrderCreateFailedException;
 import ru.liga.common.exceptions.OrderNotFoundException;
-import ru.liga.common.responses.AllOrdersResponse;
 import ru.liga.common.responses.CodeResponse;
 
 @ControllerAdvice
@@ -26,9 +25,9 @@ public class OrderExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoOrdersException.class)
     @ResponseBody
-    public AllOrdersResponse handleNoOrdersException(NoOrdersException e) {
+    public CodeResponse handleNoOrdersException(NoOrdersException e) {
 
-        return new AllOrdersResponse();
+        return new CodeResponse("400 Not Found", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

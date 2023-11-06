@@ -35,4 +35,12 @@ public class RestaurantExceptionHandler {
 
         return new CodeResponse("505 Internal Server Error", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoMenuItemsException.class)
+    @ResponseBody
+    public CodeResponse handleNoMenuItemsException(NoMenuItemsException e) {
+
+        return new CodeResponse("400 Not Found", e.getMessage());
+    }
 }
