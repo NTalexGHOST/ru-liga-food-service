@@ -3,18 +3,18 @@ package ru.liga.kitchenservice.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+
 import ru.liga.common.dtos.FullMenuItemDTO;
-import ru.liga.common.entities.Customer;
 import ru.liga.common.entities.MenuItem;
 import ru.liga.common.entities.Restaurant;
 import ru.liga.common.exceptions.MenuItemNotFoundException;
 import ru.liga.common.exceptions.NoMenuItemsException;
-import ru.liga.common.exceptions.RestaurantNotFoundException;
 import ru.liga.common.mappers.RestaurantMapper;
 import ru.liga.common.repos.MenuItemRepository;
 import ru.liga.common.repos.RestaurantRepository;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
+import ru.liga.kitchenservice.dtos.MenuItemPriceDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,12 +30,12 @@ public class MenuItemService {
 
     private final RestaurantMapper restaurantMapper;
 
-    public RestaurantMenuResponse getMenuByRestaurantId(long id) {
+    public RestaurantMenuResponse getMenu() {
 
+        //  Временная заглушка, пользователь (ресторан) позже будет подкручиваться из Spring Security
         Restaurant restaurant;
-        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(id);
-        if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
-        else throw new RestaurantNotFoundException("Ресторан с идентификатором " + id + " не найден");
+        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(1);
+        restaurant = optionalRestaurant.get();
 
         List<MenuItem> menuItems = menuItemRepo.findAllByRestaurant(restaurant);
         if (menuItems.isEmpty()) throw new NoMenuItemsException("В меню данного ресторана нет ни одной позиции");
@@ -45,17 +45,12 @@ public class MenuItemService {
         return new RestaurantMenuResponse(menuItemDTOs, 0, 10);
     }
 
-    public FullMenuItemDTO getMenuItemById(long restaurantId, long itemId) {
-
-        Restaurant restaurant;
-        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(restaurantId);
-        if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
-        else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");
+    public FullMenuItemDTO getMenuItemById(long id) {
 
         MenuItem menuItem;
-        Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(itemId);
+        Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(id);
         if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
-        else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + itemId + " не найдена");
+        else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + id + " не найдена");
 
         return restaurantMapper.menuItemToFullMenuItemDTO(menuItem);
     }
@@ -90,5 +85,18 @@ public class MenuItemService {
         menuItemRepo.delete(menuItem);
 
         return new CodeResponse("200 OK", "Позиция меню с id " + menuItem.getId() + " успешно удалена");
+    }
+
+    public CodeResponse changeMenuItemPrice(long id, MenuItemPriceDTO priceDTO) {
+
+        MenuItem menuItem;
+        Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(id);
+        if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
+        else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + id + " не найдена");
+
+        menuItem.setPrice(priceDTO.getPrice());
+
+        return new CodeResponse("200 OK", "Цена позиции меню с id " + menuItem.getId() +
+                " успешно изменена на " + priceDTO.getPrice().toString());
     }
 }

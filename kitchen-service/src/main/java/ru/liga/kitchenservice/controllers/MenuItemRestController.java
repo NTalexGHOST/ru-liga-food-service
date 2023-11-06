@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.liga.common.dtos.FullMenuItemDTO;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
+import ru.liga.kitchenservice.dtos.MenuItemPriceDTO;
 import ru.liga.kitchenservice.services.MenuItemService;
 
 @Tag(name = "Контроллер сервиса доставки")
@@ -20,20 +21,19 @@ public class MenuItemRestController {
     private final MenuItemService menuItemService;
 
     @Operation(summary = "Полное меню ресторана")
-    @GetMapping("/restaurant/{id}/menu")
+    @GetMapping("/menu")
     @ResponseStatus(HttpStatus.OK)
-    public RestaurantMenuResponse getMenuByRestaurantId(@PathVariable("id") Long id) {
+    public RestaurantMenuResponse getMenu() {
 
-        return menuItemService.getMenuByRestaurantId(id);
+        return menuItemService.getMenu();
     }
 
     @Operation(summary = "Получение позиции меню")
-    @GetMapping("/restaurant/{restaurantId}/menu/{itemId}")
+    @GetMapping("/menu/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FullMenuItemDTO getMenuItemById(@PathVariable("restaurantId") Long restaurantId,
-                                           @PathVariable("itemId") Long itemId) {
+    public FullMenuItemDTO getMenuItemById(@PathVariable("id") Long id) {
 
-        return menuItemService.getMenuItemById(restaurantId, itemId);
+        return menuItemService.getMenuItemById(id);
     }
 
     @Operation(summary = "Создание позиции меню")
@@ -50,5 +50,13 @@ public class MenuItemRestController {
     public CodeResponse deleteMenuItem(@PathVariable("id") Long id) {
 
         return menuItemService.deleteMenuItem(id);
+    }
+
+    @Operation(summary = "Изменение цены позиции меню")
+    @PutMapping("/menu/{id}/price")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse changeMenuItemPrice(@PathVariable("id") Long id, @RequestBody MenuItemPriceDTO priceDTO) {
+
+        return menuItemService.changeMenuItemPrice(id, priceDTO);
     }
 }
