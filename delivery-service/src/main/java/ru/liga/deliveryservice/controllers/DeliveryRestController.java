@@ -22,9 +22,9 @@ public class DeliveryRestController {
     @Operation(summary = "Смена статуса заявки")
     @PostMapping("/delivery/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeDeliveryStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
 
-        return deliveryService.changeDeliveryStatus(id, statusDTO);
+        return deliveryService.changeOrderStatus(id, statusDTO);
     }
 
     @Operation(summary = "Получить информацию по доставке заказов")

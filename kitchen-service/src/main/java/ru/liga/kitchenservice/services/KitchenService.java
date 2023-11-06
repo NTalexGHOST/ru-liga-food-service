@@ -10,9 +10,12 @@ import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.entities.Restaurant;
 import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.exceptions.RestaurantNotFoundException;
+import ru.liga.common.feign.OrderFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
+import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantOrdersResponse;
+import ru.liga.common.statuses.OrderStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,7 @@ public class KitchenService {
     private final CustomerOrderRepository orderRepo;
     private final RestaurantRepository restaurantRepo;
     private final OrderMapper orderMapper;
+    private final OrderFeign orderFeign;
 
     public RestaurantOrdersResponse findAllOrders(OrderStatusDTO statusDTO) {
 
@@ -40,5 +44,13 @@ public class KitchenService {
         List<RestaurantOrderDTO> orderDTOs = orderMapper.ordersToRestaurantOrderDTOs(orderEntities);
 
         return new RestaurantOrdersResponse(orderDTOs, 0, 10);
+    }
+
+    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+
+        OrderStatus status = statusDTO.getStatus();
+        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
+
+        return codeResponse;
     }
 }

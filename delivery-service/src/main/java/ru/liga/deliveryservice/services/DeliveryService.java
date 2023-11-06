@@ -10,15 +10,15 @@ import ru.liga.common.dtos.OrderItemDTO;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.exceptions.NoOrdersException;
-import ru.liga.common.exceptions.OrderNotFoundException;
+import ru.liga.common.feign.OrderFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
+import ru.liga.common.statuses.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,20 +26,15 @@ import java.util.Optional;
 public class DeliveryService {
 
     private final CustomerOrderRepository orderRepo;
-    private final CourierRepository courierRepo;
+    private final OrderFeign orderFeign;
     private final OrderMapper orderMapper;
 
-    public CodeResponse changeDeliveryStatus(long id, OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
 
-        //  Временная заглушка для смены статуса заказа, позже здесь будет запрос к order-service
-        CustomerOrder order;
-        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
-        if (optionalOrder.isPresent()) order = optionalOrder.get();
-        else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
+        OrderStatus status = statusDTO.getStatus();
+        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
 
-        order.setStatus(statusDTO.getStatus());
-
-        return new CodeResponse("200 OK", "Статус доставки успешно изменен на " + statusDTO.getStatus());
+        return codeResponse;
     }
 
     public DeliveryOrdersResponse findAllDeliveries(OrderStatusDTO statusDTO) {
