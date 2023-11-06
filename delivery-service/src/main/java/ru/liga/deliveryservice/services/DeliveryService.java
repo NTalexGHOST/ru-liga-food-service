@@ -49,11 +49,11 @@ public class DeliveryService {
             BigDecimal payment = orderDTO.getItems().stream().map(OrderItemDTO::getPrice).reduce(BigDecimal::add).get();
             orderDTO.setPayment(payment);
 
-            Point courierCoords = coordsToPoint(orderDTO.getCourier().getCoordinates());
-            Point restaurantCoords = coordsToPoint(orderDTO.getRestaurant().getAddress());
+            String courierCoords = orderDTO.getCourier().getCoordinates();
+            String restaurantCoords = orderDTO.getRestaurant().getAddress();
             orderDTO.getRestaurant().setDistance(calculateDistance(courierCoords, restaurantCoords));
 
-            Point customerCoords = coordsToPoint(orderDTO.getCustomer().getAddress());
+            String customerCoords = orderDTO.getCustomer().getAddress();
             orderDTO.getCustomer().setDistance(calculateDistance(restaurantCoords, customerCoords));
         });
 
@@ -61,9 +61,12 @@ public class DeliveryService {
     }
 
     //  Использование формулы Ламберта для длинных линий
-    private double calculateDistance(Point firstPoint, Point secondPoint) {
+    public double calculateDistance(String firstCoords, String secondCoords) {
 
         int earthRadius = 6371;
+
+        Point firstPoint = coordsToPoint(firstCoords);
+        Point secondPoint = coordsToPoint(secondCoords);
 
         double latitudeDifference = degreesToRadians(secondPoint.getX() - firstPoint.getX());
         double longitudeDifference = degreesToRadians(secondPoint.getY() - firstPoint.getY());
