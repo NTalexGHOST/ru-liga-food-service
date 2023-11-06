@@ -13,6 +13,7 @@ import java.util.List;
 public interface OrderMapper {
 
     @Mapping(target = "items", source = "orderItems")
+    @Mapping(target = "restaurantName", source = "restaurant.name")
     FullOrderDTO orderToOrderDTO(CustomerOrder order);
     List<FullOrderDTO> ordersToOrderDTOs(List<CustomerOrder> orders);
 

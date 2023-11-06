@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.CodeResponse;
-import ru.liga.orderservice.responses.CreateOrderResponse;
+import ru.liga.orderservice.responses.ConfirmOrderResponse;
 import ru.liga.orderservice.responses.CustomerOrdersResponse;
 import ru.liga.orderservice.services.OrderService;
-import ru.liga.common.dtos.ShortOrderDTO;
 import ru.liga.common.dtos.FullOrderDTO;
 
 @Tag(name = "Контроллер для работы с заказами")
@@ -53,11 +52,19 @@ public class OrderRestController {
         return orderService.changeOrderStatus(id, statusDTO);
     }
 
-    @Operation(summary = "Создание заказа")
-    @PostMapping("/order")
-    @ResponseStatus(HttpStatus.CREATED)
-    public CreateOrderResponse createOrder(@RequestBody ShortOrderDTO orderDTO) {
+    @Operation(summary = "Подтверждение заказа")
+    @PutMapping("/order/{id}/confirm")
+    @ResponseStatus(HttpStatus.OK)
+    public ConfirmOrderResponse changeOrderStatus(@PathVariable("id") Long id) {
 
-        return orderService.createOrder(orderDTO);
+        return orderService.confirmOrder(id);
+    }
+
+    @Operation(summary = "Создание заказа")
+    @PostMapping("/restaurant/{id}/order")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CodeResponse createOrder(@PathVariable("id") Long id) {
+
+        return orderService.createOrder(id);
     }
 }

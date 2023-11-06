@@ -10,7 +10,7 @@ import lombok.Setter;
 @Schema(description = "DTO для ответа после успешного создания заказа")
 @Data @Getter @Setter
 @AllArgsConstructor
-public class CreateOrderResponse {
+public class ConfirmOrderResponse {
 
     @Schema(description = "Идентификатор созданного заказа")
     @JsonProperty("id")

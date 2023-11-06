@@ -5,7 +5,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.OrderStatusDTO;
-import ru.liga.common.dtos.ShortOrderDTO;
 import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
@@ -14,7 +13,7 @@ import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
-import ru.liga.orderservice.responses.CreateOrderResponse;
+import ru.liga.orderservice.responses.ConfirmOrderResponse;
 import ru.liga.orderservice.responses.CustomerOrdersResponse;
 
 import java.sql.Timestamp;
@@ -81,16 +80,15 @@ public class OrderService {
         if (optionalOrder.isPresent()) order = optionalOrder.get();
         else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
 
-        order.setStatus(statusDTO.getStatus());
+        OrderStatus status = statusDTO.getStatus();
+        order.setStatus(status);
 
-        return new CodeResponse("200 OK", "Статус заказа успешно изменен на " + statusDTO.getStatus());
+        return new CodeResponse("200 OK", "Статус заказа успешно изменен на " + status);
     }
 
-    public CreateOrderResponse createOrder(ShortOrderDTO orderDTO) {
+    public CodeResponse createOrder(long restaurantId) {
 
         CustomerOrder order = new CustomerOrder();
-        Restaurant restaurant; long restaurantId = orderDTO.getRestaurantId();
-
 
         //  Временная заглушка, пользователь позже будет подкручиваться из Spring Security
         Customer customer;
@@ -98,48 +96,33 @@ public class OrderService {
         customer = optionalCustomer.get();
         order.setCustomer(customer);
 
-
-        order.setStatus(OrderStatus.CUSTOMER_CREATED);
+        order.setStatus(OrderStatus.CUSTOMER_CART);
         order.setTimestamp(new Timestamp(new Date().getTime()));
 
-
+        Restaurant restaurant;
         Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(restaurantId);
         if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
         else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");
         if (restaurant.getStatus().equals(RestaurantStatus.CLOSED))
             throw new RestaurantClosedException("Ресторан с идентификатором " + restaurantId + " не работает");
-
         order.setRestaurant(restaurant);
-        orderRepo.saveAndFlush(order);
-
-
-        //  Мне не очень нравятся примеры запросов и ответов в примере, а также представленные статусы заказа. Как по
-        //  мне, будет правильнее добавить еще один статус CART и инициализировать по сути пустой заказ, а уже после
-        //  отдельными запросами добавлять в него предметы и подвердить его для перехода в статус CUSTOMER_CREATED
-        orderDTO.getItems().forEach(orderItemDTO -> {
-            OrderItem orderItem = new OrderItem();
-
-            MenuItem menuItem; long menuItemId = orderItemDTO.getMenuItemId();
-            Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(menuItemId);
-            if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
-            else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + menuItemId + " не найдена");
-
-            orderItem.setOrder(order);
-            orderItem.setMenuItem(menuItem);
-            orderItem.setPrice(menuItem.getPrice());
-            orderItem.setQuantity(orderItemDTO.getQuantity());
-
-            orderItemRepo.save(orderItem);
-        });
-
-
-        //  Позднее заменится на поиск курьера в сервисе доставки
-        //  и соответственно, здесь просто будет добавляться запись о заказе в брокер
-        order.setCourier(courierRepo.findFirstById(1).get());
-
 
         orderRepo.save(order);
 
+        return new CodeResponse("200 OK", "Заказ успешно создан для добавления позиций в корзину");
+    }
+
+    public ConfirmOrderResponse confirmOrder(long id) {
+
+        CustomerOrder order;
+        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
+        if (optionalOrder.isPresent()) order = optionalOrder.get();
+        else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
+
+        List<OrderItem> orderItems = orderItemRepo.findAllByOrder(order);
+        if (orderItems.isEmpty()) throw new NoOrderItemsException("В данном заказе нет ни одной позиции");
+
+        order.setStatus(OrderStatus.CUSTOMER_CREATED);
 
         //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp с часовым
         //  поясом и после парсить в часы и минуты для ответа.
@@ -147,63 +130,7 @@ public class OrderService {
         //  ну и плюс к этому какое-нибудь среднее время приготовления заказа
         LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
 
-        return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
+        return new ConfirmOrderResponse(id, "Здесь должен быть URL для оплаты))",
                 estimatedTime.getHour() + ":" + estimatedTime.getMinute());
     }
-
-    /*  Старый метод создания заказа
-    public CreateOrderResponse createOrder(ShortOrderDTO orderDTO) {
-
-        CustomerOrder order = new CustomerOrder();
-        Restaurant restaurant; long restaurantId = orderDTO.getRestaurantId();
-
-
-        Customer customer;
-        Optional<Customer> optionalCustomer = customerRepo.findFirstById(1);
-        customer = optionalCustomer.get();
-        order.setCustomer(customer);
-
-
-        order.setStatus(OrderStatus.CUSTOMER_CREATED);
-        order.setTimestamp(new Timestamp(new Date().getTime()));
-
-
-        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(restaurantId);
-        if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
-        else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");
-        if (restaurant.getStatus().equals(RestaurantStatus.CLOSED))
-            throw new RestaurantClosedException("Ресторан с идентификатором " + restaurantId + " не работает");
-
-        order.setRestaurant(restaurant);
-        orderRepo.saveAndFlush(order);
-
-
-        orderDTO.getItems().forEach(orderItemDTO -> {
-            OrderItem orderItem = new OrderItem();
-
-            MenuItem menuItem; long menuItemId = orderItemDTO.getMenuItemId();
-            Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(menuItemId);
-            if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
-            else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + menuItemId + " не найдена");
-
-            orderItem.setOrder(order);
-            orderItem.setMenuItem(menuItem);
-            orderItem.setPrice(menuItem.getPrice());
-            orderItem.setQuantity(orderItemDTO.getQuantity());
-
-            orderItemRepo.save(orderItem);
-        });
-
-
-        order.setCourier(courierRepo.findFirstById(1).get());
-
-
-        orderRepo.save(order);
-
-
-        LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
-
-        return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
-                estimatedTime.getHour() + ":" + estimatedTime.getMinute());
-    } */
 }
