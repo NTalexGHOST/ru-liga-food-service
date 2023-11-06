@@ -39,7 +39,7 @@ public class DeliveryService {
 
         order.setStatus(statusDTO.getStatus());
 
-        return new CodeResponse("200 OK", "Статус доставки успешно изменен на " + "");
+        return new CodeResponse("200 OK", "Статус доставки успешно изменен на " + statusDTO.getStatus());
     }
 
     public DeliveryOrdersResponse findAllDeliveries(OrderStatusDTO statusDTO) {

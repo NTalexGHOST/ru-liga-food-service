@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
+import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.dtos.ShortOrderDTO;
 import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
+import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
 import ru.liga.orderservice.responses.CreateOrderResponse;
@@ -70,6 +72,18 @@ public class OrderService {
         else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
 
         return orderMapper.orderToOrderDTO(order);
+    }
+
+    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+
+        CustomerOrder order;
+        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
+        if (optionalOrder.isPresent()) order = optionalOrder.get();
+        else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
+
+        order.setStatus(statusDTO.getStatus());
+
+        return new CodeResponse("200 OK", "Статус заказа успешно изменен на " + statusDTO.getStatus());
     }
 
     public CreateOrderResponse createOrder(ShortOrderDTO orderDTO) {
