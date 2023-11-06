@@ -1,8 +1,9 @@
-package ru.liga.notificationservice.consumer;
+package ru.liga.notificationservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+
 import ru.liga.notificationservice.producer.RabbitMQProducerServiceImpl;
 
 @Service

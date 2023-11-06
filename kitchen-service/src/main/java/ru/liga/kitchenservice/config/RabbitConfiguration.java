@@ -1,4 +1,4 @@
-package ru.liga.notificationservice.config;
+package ru.liga.kitchenservice.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
@@ -27,6 +27,7 @@ public class RabbitConfiguration {
 
     @Bean
     public AmqpAdmin amqpAdmin() {
+
         return new RabbitAdmin(connectionFactory());
     }
 
@@ -42,15 +43,13 @@ public class RabbitConfiguration {
     @Bean
     public Declarables myQueue() {
 
-        Queue orderQueue = new Queue("order-service", false);
-        Queue kitchenQueue = new Queue("kitchen-service", false);
-        Queue deliveryQueue = new Queue("delivery-service", false);
+        Queue couriersQueue = new Queue("couriers", false);
+        Queue customersQueue = new Queue("customers", false);
 
         DirectExchange directExchange = new DirectExchange("directExchange");
 
-        return new Declarables(kitchenQueue, deliveryQueue, directExchange,
-                BindingBuilder.bind(kitchenQueue).to(directExchange).with("kitchen-service"),
-                BindingBuilder.bind(deliveryQueue).to(directExchange).with("delivery-service"),
-                BindingBuilder.bind(orderQueue).to(directExchange).with("order-service"));
+        return new Declarables(couriersQueue, customersQueue, directExchange,
+                BindingBuilder.bind(couriersQueue).to(directExchange).with("couriers"),
+                BindingBuilder.bind(customersQueue).to(directExchange).with("customers"));
     }
 }

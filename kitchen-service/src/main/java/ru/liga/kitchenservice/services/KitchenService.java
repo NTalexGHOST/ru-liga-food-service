@@ -1,6 +1,9 @@
 package ru.liga.kitchenservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.oer.Switch;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantOrdersResponse;
 import ru.liga.common.statuses.OrderStatus;
+import ru.liga.kitchenservice.producer.RabbitMQProducerServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,8 @@ public class KitchenService {
     private final RestaurantRepository restaurantRepo;
     private final OrderMapper orderMapper;
     private final OrderFeign orderFeign;
+    private final RabbitMQProducerServiceImpl rabbit;
+    private final ObjectMapper objectMapper;
 
     public RestaurantOrdersResponse findAllOrders(OrderStatusDTO statusDTO) {
 
@@ -51,6 +57,21 @@ public class KitchenService {
         OrderStatus status = statusDTO.getStatus();
         CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
 
+        switch (status) {
+            case DELIVERY_PENDING:
+                rabbit.sendMessage(Long.toString(id), "couriers");
+                break;
+            case KITCHEN_DENIED:
+                rabbit.sendMessage("Ваш заказ был отменен", "customers");
+                break;
+        }
+
         return codeResponse;
+    }
+
+    @RabbitListener(queues = "kitchen-service")
+    public void processMyQueue(String message) {
+
+        System.out.println(message);
     }
 }

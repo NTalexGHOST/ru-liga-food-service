@@ -10,6 +10,8 @@ import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.Courier;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.exceptions.CourierNotFoundException;
+import ru.liga.common.exceptions.NoCouriersException;
+import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.repos.CourierRepository;
 import ru.liga.common.repos.CustomerOrderRepository;
@@ -25,15 +27,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QueueListener {
 
-    private final ObjectMapper objectMapper;
+    private final CustomerOrderRepository orderRepo;
     private final CourierRepository courierRepo;
     private final DeliveryService deliveryService;
 
     @RabbitListener(queues = "delivery-service")
     @SneakyThrows
-    public void processQueue(String message) {
+    public void processMyQueue(String message) {
 
-        CustomerOrder order = objectMapper.readValue(message, CustomerOrder.class);
+        long orderId = Long.parseLong(message);
+
+        CustomerOrder order;
+        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(orderId);
+        if (optionalOrder.isPresent()) order = optionalOrder.get();
+        else throw new OrderNotFoundException("Заказ с идентификатором " + orderId + " не найден");
+
         findCourierForOrder(order);
     }
 
@@ -41,6 +49,10 @@ public class QueueListener {
 
         String restaurantCoords = order.getRestaurant().getAddress();
         List<Courier> freeCouriers = courierRepo.findAllByStatus(CourierStatus.FREE);
+        if (freeCouriers.isEmpty()) {
+            deliveryService.changeOrderStatus(order.getId(), new OrderStatusDTO(OrderStatus.DELIVERY_DENIED));
+            throw new NoCouriersException("Все курьеры в данный момент заняты");
+        }
         
         HashMap<Long, Double> distances = null;
         freeCouriers.forEach(courier -> distances.put(courier.getId(),
