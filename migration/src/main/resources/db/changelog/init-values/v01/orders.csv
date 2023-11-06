@@ -1,0 +1,4 @@
+id;customer_id;restaurant_id;status;courier_id;timestamp
+1;3;3;CUSTOMER_CREATED;;24.10.2023 10:15
+2;8;1;CUSTOMER_CREATED;;24.10.2023 15:20
+3;2;2;CUSTOMER_CREATED;;24.10.2023 15:35

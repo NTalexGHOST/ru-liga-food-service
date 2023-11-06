@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
+
 @Schema(description = "Сущность позиции в заказе")
 @Data
 @Accessors(chain = true)
@@ -23,7 +25,7 @@ public class OrderItemDTO {
 
     //  При этом, я так понимаю, здесь цена выставляется уже с учетом например скидок и т.д.
     @Schema(description = "Цена в момент заказа")
-    private float price;
+    private BigDecimal price;
 
     @Schema(description = "Количество")
     private byte quantity;
