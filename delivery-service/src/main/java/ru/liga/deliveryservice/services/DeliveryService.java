@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.DeliveryOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.feign.OrderFeign;
@@ -29,19 +28,18 @@ public class DeliveryService {
     private final OrderFeign orderFeign;
     private final OrderMapper orderMapper;
 
-    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
 
-        OrderStatus status = statusDTO.getStatus();
-        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
+        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, status);
 
         return codeResponse;
     }
 
-    public DeliveryOrdersResponse findAllDeliveries(OrderStatusDTO statusDTO) {
+    public DeliveryOrdersResponse findAllDeliveries(OrderStatus status) {
 
-        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(statusDTO.getStatus());
+        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(status);
         if (orderEntities.isEmpty())
-            throw new NoOrdersException("В базе данных нет заказов со статусом " + statusDTO.getStatus());
+            throw new NoOrdersException("В базе данных нет заказов со статусом " + status);
 
         List<DeliveryOrderDTO> orderDTOs = orderMapper.ordersToDeliveryOrderDTOs(orderEntities);
 

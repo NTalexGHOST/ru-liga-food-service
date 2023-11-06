@@ -5,7 +5,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.dtos.RestaurantOrderDTO;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.entities.Restaurant;
@@ -29,11 +28,12 @@ public class KitchenService {
 
     private final CustomerOrderRepository orderRepo;
     private final RestaurantRepository restaurantRepo;
+
     private final OrderMapper orderMapper;
     private final OrderFeign orderFeign;
     private final RabbitMQProducerServiceImpl rabbit;
 
-    public RestaurantOrdersResponse findAllOrders(OrderStatusDTO statusDTO) {
+    public RestaurantOrdersResponse findAllOrders(OrderStatus status) {
 
         //  Временная заглушка для ресторана, так понимаю данная сущность тоже будет подкручиваться через Security
         Restaurant restaurant; long restaurantId = 1;
@@ -41,7 +41,7 @@ public class KitchenService {
         if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
         else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");;
 
-        List<CustomerOrder> orderEntities = orderRepo.findAllByRestaurantAndStatus(restaurant, statusDTO.getStatus());
+        List<CustomerOrder> orderEntities = orderRepo.findAllByRestaurantAndStatus(restaurant, status);
         if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
 
         List<RestaurantOrderDTO> orderDTOs = orderMapper.ordersToRestaurantOrderDTOs(orderEntities);
@@ -49,10 +49,9 @@ public class KitchenService {
         return new RestaurantOrdersResponse(orderDTOs, 0, 10);
     }
 
-    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
 
-        OrderStatus status = statusDTO.getStatus();
-        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
+        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, status);
 
         switch (status) {
             case DELIVERY_PENDING:

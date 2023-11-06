@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
@@ -74,16 +73,14 @@ public class OrderService {
         return orderMapper.orderToOrderDTO(order);
     }
 
-    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
 
         CustomerOrder order;
         Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
         if (optionalOrder.isPresent()) order = optionalOrder.get();
         else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
 
-        OrderStatus status = statusDTO.getStatus();
         order.setStatus(status);
-
         if(status.equals(OrderStatus.CUSTOMER_PAID))
             rabbit.sendMessage("Поступил новый заказ с идентификатором " + id, "restaurants");
 

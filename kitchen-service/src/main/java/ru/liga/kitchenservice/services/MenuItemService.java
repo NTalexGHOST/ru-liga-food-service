@@ -88,16 +88,16 @@ public class MenuItemService {
         return new CodeResponse("200 OK", "Позиция меню с id " + menuItem.getId() + " успешно удалена");
     }
 
-    public CodeResponse changeMenuItemPrice(long id, MenuItemPriceDTO priceDTO) {
+    public CodeResponse changeMenuItemPrice(long id, BigDecimal price) {
 
         MenuItem menuItem;
         Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(id);
         if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
         else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + id + " не найдена");
 
-        menuItem.setPrice(priceDTO.getPrice());
+        menuItem.setPrice(price);
 
         return new CodeResponse("200 OK", "Цена позиции меню с id " + menuItem.getId() +
-                " успешно изменена на " + priceDTO.getPrice().toString());
+                " успешно изменена на " + price.toString());
     }
 }
