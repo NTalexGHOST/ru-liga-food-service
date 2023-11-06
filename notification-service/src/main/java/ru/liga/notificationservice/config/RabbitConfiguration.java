@@ -1,6 +1,6 @@
 package ru.liga.notificationservice.config;
 
-import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -37,5 +37,20 @@ public class RabbitConfiguration {
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
 
         return new RabbitTemplate(connectionFactory());
+    }
+
+    @Bean
+    public Declarables notificationsQueue() {
+
+        Queue customersQueue = new Queue("order-service", false);
+        Queue restaurantsQueue = new Queue("kitchen-service", false);
+        Queue couriersQueue = new Queue("delivery-service", false);
+
+        DirectExchange directExchange = new DirectExchange("directExchange");
+
+        return new Declarables(restaurantsQueue, couriersQueue, directExchange,
+                BindingBuilder.bind(restaurantsQueue).to(directExchange).with("kitchen-service"),
+                BindingBuilder.bind(couriersQueue).to(directExchange).with("delivery-service"),
+                BindingBuilder.bind(customersQueue).to(directExchange).with("order-service"));
     }
 }
