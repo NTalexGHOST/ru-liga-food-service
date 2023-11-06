@@ -34,7 +34,6 @@ public class KitchenService {
     private final OrderMapper orderMapper;
     private final OrderFeign orderFeign;
     private final RabbitMQProducerServiceImpl rabbit;
-    private final ObjectMapper objectMapper;
 
     public RestaurantOrdersResponse findAllOrders(OrderStatusDTO statusDTO) {
 

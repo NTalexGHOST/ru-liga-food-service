@@ -13,6 +13,7 @@ import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
+import ru.liga.orderservice.producer.RabbitMQProducerServiceImpl;
 import ru.liga.orderservice.responses.ConfirmOrderResponse;
 import ru.liga.orderservice.responses.CustomerOrdersResponse;
 
@@ -29,7 +30,7 @@ public class OrderService {
 
     private final CustomerOrderRepository orderRepo;
     private final OrderItemRepository orderItemRepo;
-    private final MenuItemRepository menuItemRepo;
+    private final RabbitMQProducerServiceImpl rabbit;
     private final RestaurantRepository restaurantRepo;
     private final CustomerRepository customerRepo;
 
@@ -82,6 +83,9 @@ public class OrderService {
 
         OrderStatus status = statusDTO.getStatus();
         order.setStatus(status);
+
+        if(status.equals(OrderStatus.CUSTOMER_PAID))
+            rabbit.sendMessage("Поступил новый заказ с идентификатором " + id, "restaurants");
 
         return new CodeResponse("200 OK", "Статус заказа успешно изменен на " + status);
     }
