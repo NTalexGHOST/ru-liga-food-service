@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import ru.liga.common.dtos.OrderStatusDTO;
+import ru.liga.common.responses.CodeResponse;
 import ru.liga.orderservice.responses.CreateOrderResponse;
 import ru.liga.orderservice.responses.CustomerOrdersResponse;
 import ru.liga.orderservice.services.OrderService;
@@ -41,6 +43,14 @@ public class OrderRestController {
     public FullOrderDTO getOrderById(@PathVariable("id") Long id) {
 
         return orderService.getOrderById(id);
+    }
+
+    @Operation(summary = "Смена статуса заказа")
+    @PutMapping("/order/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
+
+        return orderService.changeOrderStatus(id, statusDTO);
     }
 
     @Operation(summary = "Создание заказа")
