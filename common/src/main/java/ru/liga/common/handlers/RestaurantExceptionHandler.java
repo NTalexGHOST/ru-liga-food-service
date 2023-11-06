@@ -19,6 +19,13 @@ public class RestaurantExceptionHandler {
 
         return new CodeResponse("404 Not Found", e.getMessage());
     }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoMenuItemsException.class)
+    @ResponseBody
+    public CodeResponse handleNoMenuItemsException(NoMenuItemsException e) {
+
+        return new CodeResponse("404 Not Found", e.getMessage());
+    }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(RestaurantNotFoundException.class)
@@ -27,20 +34,11 @@ public class RestaurantExceptionHandler {
 
         return new CodeResponse("404 Not Found", e.getMessage());
     }
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RestaurantClosedException.class)
     @ResponseBody
     public CodeResponse handleRestaurantClosedException(RestaurantClosedException e) {
 
         return new CodeResponse("505 Internal Server Error", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoMenuItemsException.class)
-    @ResponseBody
-    public CodeResponse handleNoMenuItemsException(NoMenuItemsException e) {
-
-        return new CodeResponse("400 Not Found", e.getMessage());
     }
 }

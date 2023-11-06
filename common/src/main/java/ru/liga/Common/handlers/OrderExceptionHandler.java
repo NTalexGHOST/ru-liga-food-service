@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import ru.liga.common.exceptions.NoOrdersException;
-import ru.liga.common.exceptions.OrderCreateFailedException;
-import ru.liga.common.exceptions.OrderNotFoundException;
+import ru.liga.common.exceptions.*;
 import ru.liga.common.responses.CodeResponse;
 
 @ControllerAdvice
@@ -21,13 +19,12 @@ public class OrderExceptionHandler {
 
         return new CodeResponse("404 Not Found", e.getMessage());
     }
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoOrdersException.class)
     @ResponseBody
     public CodeResponse handleNoOrdersException(NoOrdersException e) {
 
-        return new CodeResponse("400 Not Found", e.getMessage());
+        return new CodeResponse("404 Not Found", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,5 +33,20 @@ public class OrderExceptionHandler {
     public CodeResponse handleOrderCreateFailedException(OrderCreateFailedException e) {
 
         return new CodeResponse("505 Internal Server Error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(OrderItemNotFoundException.class)
+    @ResponseBody
+    public CodeResponse handleOrderItemNotFoundException(OrderItemNotFoundException e) {
+
+        return new CodeResponse("404 Not Found", e.getMessage());
+    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoOrderItemsException.class)
+    @ResponseBody
+    public CodeResponse handleNoOrderItemsException(NoOrderItemsException e) {
+
+        return new CodeResponse("404 Not Found", e.getMessage());
     }
 }
