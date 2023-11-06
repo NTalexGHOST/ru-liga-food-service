@@ -9,11 +9,11 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 public class ShortOrderItemDTO {
 
-    @Schema(description = "Количество")
-    @JsonProperty("quantity")
-    private byte quantity;
-
     @Schema(description = "Идентификатор позиции в меню")
     @JsonProperty("menu_item_id")
     private long menuItemId;
+
+    @Schema(description = "Количество")
+    @JsonProperty("quantity")
+    private byte quantity;
 }

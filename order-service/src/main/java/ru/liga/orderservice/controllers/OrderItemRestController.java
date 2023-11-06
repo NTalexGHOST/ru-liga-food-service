@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.liga.common.dtos.FullMenuItemDTO;
 import ru.liga.common.dtos.FullOrderItemDTO;
+import ru.liga.common.dtos.ShortOrderItemDTO;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.OrderItemsResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
@@ -36,15 +37,15 @@ public class OrderItemRestController {
         return orderItemService.getOrderItemById(id);
     }
 
-    @Operation(summary = "Создание позиции меню")
-    @PostMapping("/order-item")
+    @Operation(summary = "Создание позиции заказа")
+    @PostMapping("/order/{id}/order-item")
     @ResponseStatus(HttpStatus.OK)
-    public CodeResponse createOrderItem(@RequestBody FullMenuItemDTO menuItemDTO) {
+    public CodeResponse createOrderItem(@PathVariable("id") Long id, @RequestBody ShortOrderItemDTO orderItemDTO) {
 
-        return orderItemService.createOrderItem(menuItemDTO);
+        return orderItemService.createOrderItem(id, orderItemDTO);
     }
 
-    @Operation(summary = "Удаление позиции меню")
+    @Operation(summary = "Удаление позиции заказа")
     @DeleteMapping("/order-item/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CodeResponse deleteOrderItem(@PathVariable("id") Long id) {
