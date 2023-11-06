@@ -1,4 +1,4 @@
-package ru.liga.OrderService.controllers;
+package ru.liga.orderservice.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -6,15 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import ru.liga.OrderService.services.OrderService;
+import ru.liga.orderservice.responses.CreateOrderResponse;
+import ru.liga.orderservice.responses.CustomerOrdersResponse;
+import ru.liga.orderservice.services.OrderService;
 import ru.liga.common.dtos.ShortOrderDTO;
 import ru.liga.common.dtos.FullOrderDTO;
-import ru.liga.common.responses.AllOrdersResponse;
-import ru.liga.common.responses.CreateOrderResponse;
 
 @Tag(name = "Контроллер для работы с заказами")
-@RestController
-@RequestMapping("order-service")
+@RestController @RequestMapping("order-service")
 @RequiredArgsConstructor
 public class OrderRestController {
 
@@ -23,7 +22,7 @@ public class OrderRestController {
     @Operation(summary = "Возврат списка заказов")
     @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
-    public AllOrdersResponse getAllOrders() {
+    public CustomerOrdersResponse getAllOrders() {
 
         return orderService.findAllOrders();
     }

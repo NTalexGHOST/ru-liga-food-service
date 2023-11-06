@@ -1,4 +1,4 @@
-package ru.liga.common.responses;
+package ru.liga.orderservice.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +11,7 @@ import java.util.List;
 @Schema(description = "DTO для вывода всех заказов")
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class AllOrdersResponse {
+public class CustomerOrdersResponse {
 
     @Schema(description = "Коллекция заказов")
     @JsonProperty("orders")

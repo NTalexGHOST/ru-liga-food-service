@@ -1,4 +1,4 @@
-package ru.liga.KitchenService;
+package ru.liga.kitchenservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

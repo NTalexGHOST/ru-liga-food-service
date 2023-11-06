@@ -1,4 +1,4 @@
-package ru.liga.OrderService.services;
+package ru.liga.orderservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,10 +10,10 @@ import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
-import ru.liga.common.responses.AllOrdersResponse;
-import ru.liga.common.responses.CreateOrderResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
+import ru.liga.orderservice.responses.CreateOrderResponse;
+import ru.liga.orderservice.responses.CustomerOrdersResponse;
 
 import java.sql.Timestamp;
 import java.time.LocalTime;
@@ -37,14 +37,14 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
 
-    public AllOrdersResponse findAllOrders() {
+    public CustomerOrdersResponse findAllOrders() {
 
         List<CustomerOrder> orderEntities = orderRepo.findAll();
         if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
 
         List<FullOrderDTO> fullOrderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
 
-        return new AllOrdersResponse(fullOrderDTOs, 0, 10);
+        return new CustomerOrdersResponse(fullOrderDTOs, 0, 10);
     }
 
     public FullOrderDTO findOrderById(long id) {
@@ -110,11 +110,13 @@ public class OrderService {
 
 
         orderRepo.save(order);
-        LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
 
+        
         //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp с часовым
         //  поясом и после парсить в часы и минуты для ответа.
         //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до ресторана
+        LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
+
         return new CreateOrderResponse(order.getId(), "Здесь должен быть URL для оплаты))",
                 estimatedTime.getHour() + ":" + estimatedTime.getMinute());
     }

@@ -1,4 +1,4 @@
-package ru.liga.KitchenService;
+package ru.liga.kitchenservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

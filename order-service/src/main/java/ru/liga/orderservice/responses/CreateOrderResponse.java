@@ -1,4 +1,4 @@
-package ru.liga.common.responses;
+package ru.liga.orderservice.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

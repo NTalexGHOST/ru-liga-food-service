@@ -1,4 +1,4 @@
-package ru.liga.KitchenService.controllers;
+package ru.liga.kitchenservice.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import ru.liga.KitchenService.services.KitchenService;
+import ru.liga.kitchenservice.services.KitchenService;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.RestaurantOrdersResponse;
 

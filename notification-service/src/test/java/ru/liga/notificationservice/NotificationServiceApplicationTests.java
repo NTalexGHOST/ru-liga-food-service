@@ -1,10 +1,10 @@
-package ru.liga.DeliveryService;
+package ru.liga.notificationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DeliveryServiceApplicationTests {
+class NotificationServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,16 +1,14 @@
-package ru.liga.KitchenService.services;
+package ru.liga.kitchenservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.dtos.RestaurantOrderDTO;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.entities.Restaurant;
 import ru.liga.common.exceptions.NoOrdersException;
-import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.exceptions.RestaurantNotFoundException;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;

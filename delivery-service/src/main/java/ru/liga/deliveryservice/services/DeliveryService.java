@@ -1,4 +1,4 @@
-package ru.liga.DeliveryService.services;
+package ru.liga.deliveryservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
@@ -6,7 +6,6 @@ import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.DeliveryOrderDTO;
-import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.CustomerOrder;
