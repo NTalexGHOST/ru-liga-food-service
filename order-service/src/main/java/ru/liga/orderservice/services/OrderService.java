@@ -37,7 +37,7 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
 
-    public CustomerOrdersResponse findAllOrders() {
+    public CustomerOrdersResponse getAllOrders() {
 
         List<CustomerOrder> orderEntities = orderRepo.findAll();
         if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
@@ -47,7 +47,22 @@ public class OrderService {
         return new CustomerOrdersResponse(fullOrderDTOs, 0, 10);
     }
 
-    public FullOrderDTO findOrderById(long id) {
+    public CustomerOrdersResponse getAllOrdersByCustomer() {
+
+        //  Временная заглушка, пользователь позже будет подкручиваться из Spring Security
+        Customer customer;
+        Optional<Customer> optionalCustomer = customerRepo.findFirstById(1);
+        customer = optionalCustomer.get();
+
+        List<CustomerOrder> orderEntities = orderRepo.findAllByCustomer(customer);
+        if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
+
+        List<FullOrderDTO> fullOrderDTOs = orderMapper.ordersToOrderDTOs(orderEntities);
+
+        return new CustomerOrdersResponse(fullOrderDTOs, 0, 10);
+    }
+
+    public FullOrderDTO getOrderById(long id) {
 
         CustomerOrder order;
         Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
@@ -111,7 +126,7 @@ public class OrderService {
 
         orderRepo.save(order);
 
-        
+
         //  LocalTime лишь в качестве заглушки, понимаю, что в идеале использовать какой-нибудь TimeStamp с часовым
         //  поясом и после парсить в часы и минуты для ответа.
         //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до ресторана

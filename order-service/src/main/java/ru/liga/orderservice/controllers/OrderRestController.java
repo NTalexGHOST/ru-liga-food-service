@@ -20,11 +20,19 @@ public class OrderRestController {
     private final OrderService orderService;
 
     @Operation(summary = "Возврат списка заказов")
-    @GetMapping("/orders")
+    @GetMapping("/orders/all")
     @ResponseStatus(HttpStatus.OK)
     public CustomerOrdersResponse getAllOrders() {
 
-        return orderService.findAllOrders();
+        return orderService.getAllOrders();
+    }
+
+    @Operation(summary = "Возврат списка заказов")
+    @GetMapping("/orders")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerOrdersResponse getAllOrdersByCustomer() {
+
+        return orderService.getAllOrdersByCustomer();
     }
 
     @Operation(summary = "Возврат заказа по его id")
@@ -32,7 +40,7 @@ public class OrderRestController {
     @ResponseStatus(HttpStatus.OK)
     public FullOrderDTO getOrderById(@PathVariable("id") Long id) {
 
-        return orderService.findOrderById(id);
+        return orderService.getOrderById(id);
     }
 
     @Operation(summary = "Создание заказа")
