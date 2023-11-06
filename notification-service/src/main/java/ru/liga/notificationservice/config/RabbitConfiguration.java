@@ -27,6 +27,7 @@ public class RabbitConfiguration {
 
     @Bean
     public AmqpAdmin amqpAdmin() {
+
         return new RabbitAdmin(connectionFactory());
     }
 
@@ -42,9 +43,9 @@ public class RabbitConfiguration {
     @Bean
     public Declarables myQueue() {
 
-        Queue orderQueue = new Queue("order-service", false);
         Queue kitchenQueue = new Queue("kitchen-service", false);
         Queue deliveryQueue = new Queue("delivery-service", false);
+        Queue orderQueue = new Queue("order-service", false);
 
         DirectExchange directExchange = new DirectExchange("directExchange");
 

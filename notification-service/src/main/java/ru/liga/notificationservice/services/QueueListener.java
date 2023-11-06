@@ -10,23 +10,23 @@ import ru.liga.notificationservice.producer.RabbitMQProducerServiceImpl;
 @RequiredArgsConstructor
 public class QueueListener {
 
-    private final RabbitMQProducerServiceImpl rabbitMQProducerService;
+    private final RabbitMQProducerServiceImpl rabbit;
 
     @RabbitListener(queues = "customers")
     public void processCustomersQueue(String message) {
 
-        rabbitMQProducerService.sendMessage(message, "order-service");
+        rabbit.sendMessage(message, "order-service");
     }
 
     @RabbitListener(queues = "restaurants")
     public void processRestaurantsQueue(String message) {
 
-        rabbitMQProducerService.sendMessage(message, "kitchen-service");
+        rabbit.sendMessage(message, "kitchen-service");
     }
 
     @RabbitListener(queues = "couriers")
     public void processCouriersQueue(String message) {
 
-        rabbitMQProducerService.sendMessage(message, "delivery-service");
+        rabbit.sendMessage(message, "delivery-service");
     }
 }
