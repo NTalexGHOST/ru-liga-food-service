@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import ru.liga.common.dtos.FullMenuItemDTO;
-import ru.liga.common.dtos.FullOrderDTO;
+import ru.liga.common.entities.Customer;
 import ru.liga.common.entities.MenuItem;
 import ru.liga.common.entities.Restaurant;
 import ru.liga.common.exceptions.MenuItemNotFoundException;
 import ru.liga.common.exceptions.NoMenuItemsException;
-import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.exceptions.RestaurantNotFoundException;
 import ru.liga.common.mappers.RestaurantMapper;
 import ru.liga.common.repos.MenuItemRepository;
 import ru.liga.common.repos.RestaurantRepository;
+import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
 
 import java.math.BigDecimal;
@@ -58,5 +58,37 @@ public class MenuItemService {
         else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + itemId + " не найдена");
 
         return restaurantMapper.menuItemToFullMenuItemDTO(menuItem);
+    }
+
+    public CodeResponse createMenuItem(FullMenuItemDTO menuItemDTO) {
+
+        MenuItem menuItem = new MenuItem();
+
+        //  Временная заглушка, пользователь (ресторан) позже будет подкручиваться из Spring Security
+        Restaurant restaurant;
+        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(1);
+        restaurant = optionalRestaurant.get();
+        menuItem.setRestaurant(restaurant);
+
+        menuItem.setName(menuItemDTO.getName());
+        menuItem.setPrice(menuItemDTO.getPrice());
+        menuItem.setImage(menuItemDTO.getImage());
+        menuItem.setDescription(menuItemDTO.getDescription());
+
+        menuItemRepo.saveAndFlush(menuItem);
+
+        return new CodeResponse("200 OK", "Позиция меню с id " + menuItem.getId() + " успешно создана");
+    }
+
+    public CodeResponse deleteMenuItem(long id) {
+
+        MenuItem menuItem;
+        Optional<MenuItem> optionalMenuItem = menuItemRepo.findFirstById(id);
+        if (optionalMenuItem.isPresent()) menuItem = optionalMenuItem.get();
+        else throw new MenuItemNotFoundException("Позиция в меню с идентификатором " + id + " не найдена");
+
+        menuItemRepo.delete(menuItem);
+
+        return new CodeResponse("200 OK", "Позиция меню с id " + menuItem.getId() + " успешно удалена");
     }
 }

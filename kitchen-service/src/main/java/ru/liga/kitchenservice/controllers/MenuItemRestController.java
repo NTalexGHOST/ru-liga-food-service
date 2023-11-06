@@ -35,4 +35,20 @@ public class MenuItemRestController {
 
         return menuItemService.getMenuItemById(restaurantId, itemId);
     }
+
+    @Operation(summary = "Создание позиции меню")
+    @PostMapping("/menu")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse createMenuItem(@RequestBody FullMenuItemDTO menuItemDTO) {
+
+        return menuItemService.createMenuItem(menuItemDTO);
+    }
+
+    @Operation(summary = "Создание позиции меню")
+    @DeleteMapping("/menu/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse deleteMenuItem(@PathVariable("id") Long id) {
+
+        return menuItemService.deleteMenuItem(id);
+    }
 }
