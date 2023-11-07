@@ -7,11 +7,10 @@ import ru.liga.common.statuses.CourierStatus;
 import javax.persistence.*;
 
 @Entity(name = "courier")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Courier {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import ru.liga.common.statuses.CourierStatus;
+import ru.liga.common.statuses.OrderStatus;
 import ru.liga.deliveryservice.services.DeliveryService;
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
 
@@ -22,16 +23,24 @@ public class DeliveryRestController {
     @Operation(summary = "Смена статуса заявки")
     @PostMapping("/delivery/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestParam("status") OrderStatus status) {
 
-        return deliveryService.changeOrderStatus(id, statusDTO);
+        return deliveryService.changeOrderStatus(id, status);
     }
 
     @Operation(summary = "Получить информацию по доставке заказов")
     @PostMapping("/deliveries")
     @ResponseStatus(HttpStatus.OK)
-    public DeliveryOrdersResponse getAllDeliveries(@RequestBody OrderStatusDTO statusDTO) {
+    public DeliveryOrdersResponse getAllDeliveries(@RequestParam("status") OrderStatus status) {
 
-        return deliveryService.findAllDeliveries(statusDTO);
+        return deliveryService.findAllDeliveries(status);
+    }
+
+    @Operation(summary = "Сменить статус курьера")
+    @PostMapping("/courier/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse changeCourierStatus(@PathVariable("id") Long id, @RequestParam("status") CourierStatus status) {
+
+        return deliveryService.changeCourierStatus(id, status);
     }
 }

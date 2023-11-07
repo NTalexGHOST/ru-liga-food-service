@@ -28,11 +28,6 @@ public class OrderItemService {
     private final CustomerOrderRepository orderRepo;
     private final OrderItemRepository orderItemRepo;
     private final MenuItemRepository menuItemRepo;
-    private final RestaurantRepository restaurantRepo;
-    private final CustomerRepository customerRepo;
-
-    //  Временно, в 6 задании появится взаимодействие с сервисом доставки для поиска курьера
-    private final CourierRepository courierRepo;
 
     private final OrderMapper orderMapper;
 

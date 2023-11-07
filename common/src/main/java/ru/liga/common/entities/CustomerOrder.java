@@ -12,6 +12,7 @@ import java.util.List;
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class CustomerOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

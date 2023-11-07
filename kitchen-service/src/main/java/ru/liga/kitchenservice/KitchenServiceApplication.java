@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "ru.liga.kitchenservice", "ru.liga.common" })
 @EnableFeignClients(basePackages = "ru.liga.common")
 public class KitchenServiceApplication {
 

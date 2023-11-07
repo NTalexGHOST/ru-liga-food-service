@@ -1,17 +1,14 @@
 package ru.liga.deliveryservice.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.Courier;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.exceptions.CourierNotFoundException;
 import ru.liga.common.exceptions.NoCouriersException;
-import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.repos.CourierRepository;
 import ru.liga.common.repos.CustomerOrderRepository;
@@ -50,12 +47,12 @@ public class QueueListener {
         String restaurantCoords = order.getRestaurant().getAddress();
         List<Courier> freeCouriers = courierRepo.findAllByStatus(CourierStatus.FREE);
         if (freeCouriers.isEmpty()) {
-            deliveryService.changeOrderStatus(order.getId(), new OrderStatusDTO(OrderStatus.DELIVERY_DENIED));
+            deliveryService.changeOrderStatus(order.getId(), OrderStatus.DELIVERY_DENIED);
             throw new NoCouriersException("Все курьеры в данный момент заняты");
         }
         
         HashMap<Long, Double> distances = null;
-        freeCouriers.forEach(courier -> distances.put(courier.getId(),
+        freeCouriers.stream().forEach(courier -> distances.put(courier.getId(),
                 deliveryService.calculateDistance(restaurantCoords, courier.getCoordinates())));
 
         double closestDistance = 0; long closestCourierId = 0;
@@ -72,6 +69,6 @@ public class QueueListener {
         courier.setStatus(CourierStatus.BUSY);
         courierRepo.save(courier);
 
-        deliveryService.changeOrderStatus(order.getId(), new OrderStatusDTO(OrderStatus.DELIVERY_PICKING));
+        deliveryService.changeOrderStatus(order.getId(), OrderStatus.DELIVERY_PICKING);
     }
 }

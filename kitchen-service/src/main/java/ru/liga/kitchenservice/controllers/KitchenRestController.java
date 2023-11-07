@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import ru.liga.common.responses.CodeResponse;
+import ru.liga.common.statuses.OrderStatus;
 import ru.liga.kitchenservice.services.KitchenService;
-import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.RestaurantOrdersResponse;
 
 @Tag(name = "Контроллер для работы с рестораном")
@@ -19,20 +19,19 @@ public class KitchenRestController {
 
     private final KitchenService kitchenService;
 
-    //  URL /orders?status=active/complete/denied решено было изменить на /orders с передачей OrderStatusDTO
     @Operation(summary = "Получение всех заказов ресторана с соответствующим статусом")
     @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
-    public RestaurantOrdersResponse getAllOrders(@RequestBody OrderStatusDTO statusDTO) {
+    public RestaurantOrdersResponse getAllOrders(@RequestParam("status") OrderStatus status) {
 
-        return kitchenService.findAllOrders(statusDTO);
+        return kitchenService.findAllOrders(status);
     }
 
     @Operation(summary = "Смена статуса заказа")
-    @PostMapping("/order/{id}/status")
+    @PostMapping("/order/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestParam("status") OrderStatus status) {
 
-        return kitchenService.changeOrderStatus(id, statusDTO);
+        return kitchenService.changeOrderStatus(id, status);
     }
 }

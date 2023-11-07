@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Schema(description = "DTO заказа для сервиса доставки")

@@ -7,18 +7,22 @@ import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.DeliveryOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
-import ru.liga.common.dtos.OrderStatusDTO;
+import ru.liga.common.entities.Courier;
 import ru.liga.common.entities.CustomerOrder;
+import ru.liga.common.exceptions.CourierNotFoundException;
 import ru.liga.common.exceptions.NoOrdersException;
+import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.feign.OrderFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
+import ru.liga.common.statuses.CourierStatus;
 import ru.liga.common.statuses.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,27 +30,42 @@ import java.util.List;
 public class DeliveryService {
 
     private final CustomerOrderRepository orderRepo;
+    private final CourierRepository courierRepo;
+
     private final OrderFeign orderFeign;
     private final OrderMapper orderMapper;
 
-    public CodeResponse changeOrderStatus(long id, OrderStatusDTO statusDTO) {
+    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
 
-        OrderStatus status = statusDTO.getStatus();
-        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, statusDTO);
+        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, status);
 
         return codeResponse;
     }
 
-    public DeliveryOrdersResponse findAllDeliveries(OrderStatusDTO statusDTO) {
+    public CodeResponse changeCourierStatus(long id, CourierStatus status) {
 
-        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(statusDTO.getStatus());
+        Courier courier;
+        Optional<Courier> optionalCourier = courierRepo.findFirstById(id);
+        if (optionalCourier.isPresent()) courier = optionalCourier.get();
+        else throw new CourierNotFoundException("Курьер с идентификатором " + id + " не найден");
+
+        courier.setStatus(status);
+
+        return new CodeResponse("200 OK", "Статус курьера успешно изменен на " + status);
+    }
+
+    public DeliveryOrdersResponse findAllDeliveries(OrderStatus status) {
+
+        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(status);
         if (orderEntities.isEmpty())
-            throw new NoOrdersException("В базе данных нет заказов со статусом " + statusDTO.getStatus());
+            throw new NoOrdersException("В базе данных нет заказов со статусом " + status);
 
         List<DeliveryOrderDTO> orderDTOs = orderMapper.ordersToDeliveryOrderDTOs(orderEntities);
 
-        orderDTOs.forEach(orderDTO -> {
+        orderDTOs.stream().forEach(orderDTO -> {
             BigDecimal payment = orderDTO.getItems().stream().map(OrderItemDTO::getPrice).reduce(BigDecimal::add).get();
+            //  Коэффициент оплаты курьеру в зависимости от стоимости заказа
+            payment = payment.multiply(BigDecimal.valueOf(0.1));
             orderDTO.setPayment(payment);
 
             String courierCoords = orderDTO.getCourier().getCoordinates();

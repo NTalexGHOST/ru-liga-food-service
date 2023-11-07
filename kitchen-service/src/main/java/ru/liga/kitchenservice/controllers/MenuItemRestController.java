@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.liga.common.dtos.FullMenuItemDTO;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
-import ru.liga.kitchenservice.dtos.MenuItemPriceDTO;
 import ru.liga.kitchenservice.services.MenuItemService;
+
+import java.math.BigDecimal;
 
 @Tag(name = "Контроллер для работы с позициями меню")
 @RestController
@@ -53,10 +54,10 @@ public class MenuItemRestController {
     }
 
     @Operation(summary = "Изменение цены позиции меню")
-    @PutMapping("/menu-item/{id}/price")
+    @PutMapping("/menu-item/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeMenuItemPrice(@PathVariable("id") Long id, @RequestBody MenuItemPriceDTO priceDTO) {
+    public CodeResponse changeMenuItemPrice(@PathVariable("id") Long id, @RequestParam("price") BigDecimal price) {
 
-        return menuItemService.changeMenuItemPrice(id, priceDTO);
+        return menuItemService.changeMenuItemPrice(id, price);
     }
 }
