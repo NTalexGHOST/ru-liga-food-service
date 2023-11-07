@@ -63,16 +63,15 @@ public class OrderService {
         return orderMapper.orderToOrderDTO(order);
     }
 
-    public ResponseEntity<String> changeOrderStatus(UUID id, OrderStatus status) {
+    public ResponseEntity<String> changeOrderStatus(UUID orderId, OrderStatus orderStatus) {
 
         CustomerOrder order;
-        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(id);
+        Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(orderId);
         if (optionalOrder.isPresent()) order = optionalOrder.get();
-        else return new ResponseEntity("Заказ с идентификатором " + id + " не найден", HttpStatus.NOT_FOUND);
+        else return new ResponseEntity("Заказ с идентификатором " + orderId + " не найден", HttpStatus.NOT_FOUND);
+        order.setStatus(orderStatus);
 
-        order.setStatus(status);
-
-        return ResponseEntity.ok("Статус заказа успешно изменен на " + status);
+        return ResponseEntity.ok("Статус заказа успешно изменен на " + orderStatus);
     }
 
     public CustomerOrdersResponse createOrder(ShortOrderDTO orderDTO) {

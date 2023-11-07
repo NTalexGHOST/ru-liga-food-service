@@ -21,7 +21,6 @@ public class FullOrderDTO {
 
     @JsonIgnore
     private Restaurant restaurant;
-
     @Schema(description = "Ресторан")
     @JsonProperty("restaurant")
     private String restaurantName;

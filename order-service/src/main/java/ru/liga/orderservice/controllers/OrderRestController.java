@@ -40,10 +40,10 @@ public class OrderRestController {
 
     @Operation(summary = "Смена статуса заказа")
     @PutMapping("/order/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeOrderStatus(@PathVariable("id") UUID id, @RequestParam("status") OrderStatus status) {
+    public ResponseEntity<String> changeOrderStatus(@PathVariable("id") UUID orderId,
+                                                    @RequestParam("status") OrderStatus orderStatus) {
 
-        return orderService.changeOrderStatus(id, status);
+        return orderService.changeOrderStatus(orderId, orderStatus);
     }
 
     @Operation(summary = "Создание заказа")
