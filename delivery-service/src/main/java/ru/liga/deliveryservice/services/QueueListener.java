@@ -52,7 +52,7 @@ public class QueueListener {
         }
         
         HashMap<Long, Double> distances = null;
-        freeCouriers.forEach(courier -> distances.put(courier.getId(),
+        freeCouriers.stream().forEach(courier -> distances.put(courier.getId(),
                 deliveryService.calculateDistance(restaurantCoords, courier.getCoordinates())));
 
         double closestDistance = 0; long closestCourierId = 0;
