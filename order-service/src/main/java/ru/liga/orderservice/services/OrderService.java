@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.liga.common.dtos.FullOrderDTO;
 import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
+import ru.liga.common.feign.DeliveryFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
 import ru.liga.common.responses.CodeResponse;
+import ru.liga.common.statuses.CourierStatus;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
 import ru.liga.orderservice.producer.RabbitMQProducerServiceImpl;
@@ -29,14 +31,12 @@ public class OrderService {
 
     private final CustomerOrderRepository orderRepo;
     private final OrderItemRepository orderItemRepo;
-    private final RabbitMQProducerServiceImpl rabbit;
     private final RestaurantRepository restaurantRepo;
     private final CustomerRepository customerRepo;
 
-    //  Временно, в 6 задании появится взаимодействие с сервисом доставки для поиска курьера
-    private final CourierRepository courierRepo;
-
     private final OrderMapper orderMapper;
+    private final RabbitMQProducerServiceImpl rabbit;
+    private final DeliveryFeign deliveryFeign;
 
     public CustomerOrdersResponse getAllOrders() {
 
@@ -81,8 +81,14 @@ public class OrderService {
         else throw new OrderNotFoundException("Заказ с идентификатором " + id + " не найден");
 
         order.setStatus(status);
-        if(status.equals(OrderStatus.CUSTOMER_PAID))
-            rabbit.sendMessage("Поступил новый заказ с идентификатором " + id, "restaurants");
+        switch (status) {
+            case CUSTOMER_PAID:
+                rabbit.sendMessage("Поступил новый заказ с идентификатором " + id, "restaurants");
+                break;
+            case DELIVERY_COMPLETE:
+                deliveryFeign.changeCourierStatus(order.getCourier().getId(), CourierStatus.FREE);
+                break;
+        }
 
         return new CodeResponse("200 OK", "Статус заказа успешно изменен на " + status);
     }
