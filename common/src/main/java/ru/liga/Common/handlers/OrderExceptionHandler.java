@@ -19,65 +19,45 @@ public class OrderExceptionHandler {
     /**
      * Функция отвечает за обработку исключений типа {@link OrderNotFoundException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(OrderNotFoundException.class)
-    @ResponseBody
-    public CodeResponse handleOrderNotFoundException(OrderNotFoundException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleOrderNotFoundException(OrderNotFoundException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link NoOrdersException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoOrdersException.class)
-    @ResponseBody
-    public CodeResponse handleNoOrdersException(NoOrdersException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleNoOrdersException(NoOrdersException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link OrderCreateFailedException}
      * @param e - отлавливаемое исключение
-     * @return возвращает INTERNAL_SERVER_ERROR с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 500 INTERNAL_SERVER_ERROR
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(OrderCreateFailedException.class)
-    @ResponseBody
-    public CodeResponse handleOrderCreateFailedException(OrderCreateFailedException e) {
-
-        return new CodeResponse("505 Internal Server Error", e.getMessage());
-    }
+    public void handleOrderCreateFailedException(OrderCreateFailedException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link OrderItemNotFoundException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(OrderItemNotFoundException.class)
-    @ResponseBody
-    public CodeResponse handleOrderItemNotFoundException(OrderItemNotFoundException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleOrderItemNotFoundException(OrderItemNotFoundException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link NoOrderItemsException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoOrderItemsException.class)
-    @ResponseBody
-    public CodeResponse handleNoOrderItemsException(NoOrderItemsException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleNoOrderItemsException(NoOrderItemsException e) { }
 }

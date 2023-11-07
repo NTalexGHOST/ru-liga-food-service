@@ -20,26 +20,18 @@ public class DeliveryExceptionHandler {
     /**
      * Функция отвечает за обработку исключений типа {@link CourierNotFoundException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(CourierNotFoundException.class)
-    @ResponseBody
-    public CodeResponse handleCourierNotFoundException(CourierNotFoundException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleCourierNotFoundException(CourierNotFoundException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link NoCouriersException}
      * @param e - отлавливаемое исключение
-     * @return возвращает NOT_FOUND с описанием {@link CodeResponse}
+     * Запрос, вызвавший исключение, возвращает код 404 NOT_FOUND
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoCouriersException.class)
-    @ResponseBody
-    public CodeResponse handleNoCouriersException(NoCouriersException e) {
-
-        return new CodeResponse("404 Not Found", e.getMessage());
-    }
+    public void handleNoCouriersException(NoCouriersException e) { }
 }
