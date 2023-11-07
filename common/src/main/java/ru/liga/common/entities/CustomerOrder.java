@@ -7,6 +7,7 @@ import ru.liga.common.statuses.OrderStatus;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 @Entity(name = "customer_order")
 @Data @Getter @Setter
@@ -14,8 +15,7 @@ import java.util.List;
 public class CustomerOrder {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

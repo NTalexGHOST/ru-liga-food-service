@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity(name = "menu_item")
 @Data @Getter @Setter
@@ -11,8 +12,7 @@ import java.math.BigDecimal;
 public class MenuItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")

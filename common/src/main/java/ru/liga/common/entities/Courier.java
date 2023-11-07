@@ -5,6 +5,7 @@ import lombok.*;
 import ru.liga.common.statuses.CourierStatus;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "courier")
 @Data @Getter @Setter
@@ -12,8 +13,7 @@ import javax.persistence.*;
 public class Courier {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "phone")
     private String phone;

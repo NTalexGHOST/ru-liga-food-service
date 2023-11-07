@@ -5,6 +5,7 @@ import lombok.*;
 import ru.liga.common.statuses.RestaurantStatus;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "restaurant")
 @Data @Getter @Setter
@@ -12,8 +13,7 @@ import javax.persistence.*;
 public class Restaurant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "name")
     private String name;

@@ -1,9 +1,7 @@
-create sequence if not exists menu_item_seq;
-
 create table if not exists menu_item
 (
-    id bigint not null default nextval('menu_item_seq'),
-    restaurant_id bigint not null,
+    id uuid not null,
+    restaurant_id uuid not null,
     name varchar(64) not null,
     price decimal not null,
     image text,

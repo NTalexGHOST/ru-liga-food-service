@@ -3,6 +3,7 @@ package ru.liga.common.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "customer")
 @Data @Getter @Setter
@@ -10,8 +11,7 @@ import javax.persistence.*;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "phone")
     private String phone;

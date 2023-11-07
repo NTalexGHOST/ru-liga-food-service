@@ -1,8 +1,6 @@
-create sequence if not exists restaurant_seq;
-
 create table if not exists restaurant
 (
-    id bigint not null default nextval('restaurant_seq'),
+    id uuid not null,
     name varchar(64) not null,
     address point not null,
     status varchar(64) not null,

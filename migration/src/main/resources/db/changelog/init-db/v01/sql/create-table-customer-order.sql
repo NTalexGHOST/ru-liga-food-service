@@ -1,12 +1,10 @@
-create sequence if not exists customer_order_seq;
-
 create table if not exists customer_order
 (
-    id bigint not null default nextval('customer_order_seq'),
-    customer_id bigint not null,
-    restaurant_id bigint not null,
+    id uuid not null,
+    customer_id uuid not null,
+    restaurant_id uuid not null,
     status varchar(64) not null,
-    courier_id bigint,
+    courier_id uuid,
     timestamp timestamp not null,
     constraint order_pk primary key (id),
     constraint customer_fk foreign key(customer_id) references customer(id),

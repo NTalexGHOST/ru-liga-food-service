@@ -1,10 +1,8 @@
-create sequence if not exists order_item_seq;
-
 create table if not exists order_item
 (
-    id bigint not null default nextval('order_item_seq'),
-    order_id bigint not null,
-    menu_item_id bigint not null,
+    id uuid not null,
+    order_id uuid not null,
+    menu_item_id uuid not null,
     price decimal not null,
     quantity smallint not null,
     constraint order_item_pk primary key (id),
