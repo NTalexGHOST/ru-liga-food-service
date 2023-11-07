@@ -7,10 +7,11 @@ import ru.liga.common.statuses.CourierStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface CourierRepository extends JpaRepository<Courier, Long> {
-    Optional<Courier> findFirstById(long id);
+public interface CourierRepository extends JpaRepository<Courier, UUID> {
+    Optional<Courier> findFirstById(UUID id);
 
     List<Courier> findAllByStatus(CourierStatus status);
 }

@@ -9,11 +9,12 @@ import ru.liga.common.statuses.OrderStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Long> {
+public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, UUID> {
 
-    Optional<CustomerOrder> findFirstById(long id);
+    Optional<CustomerOrder> findFirstById(UUID id);
 
     List<CustomerOrder> findAll();
     List<CustomerOrder> findAllByStatus(OrderStatus status);

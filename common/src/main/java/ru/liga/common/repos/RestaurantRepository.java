@@ -7,10 +7,11 @@ import ru.liga.common.statuses.RestaurantStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
-    Optional<Restaurant> findFirstById(long id);
+public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
+    Optional<Restaurant> findFirstById(UUID id);
 
     List<Restaurant> findAllByStatus(RestaurantStatus status);
 }

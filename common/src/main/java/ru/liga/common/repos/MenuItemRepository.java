@@ -7,11 +7,12 @@ import ru.liga.common.entities.Restaurant;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
+public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
-    Optional<MenuItem> findFirstById(long id);
+    Optional<MenuItem> findFirstById(UUID id);
 
     List<MenuItem> findAllByRestaurant(Restaurant restaurant);
 }
