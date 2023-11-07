@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import ru.liga.common.responses.CodeResponse;
 import ru.liga.kitchenservice.services.KitchenService;
 import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.responses.RestaurantOrdersResponse;
@@ -25,5 +26,13 @@ public class KitchenRestController {
     public RestaurantOrdersResponse getAllOrders(@RequestBody OrderStatusDTO statusDTO) {
 
         return kitchenService.findAllOrders(statusDTO);
+    }
+
+    @Operation(summary = "Смена статуса заказа")
+    @PostMapping("/order/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestBody OrderStatusDTO statusDTO) {
+
+        return kitchenService.changeOrderStatus(id, statusDTO);
     }
 }
