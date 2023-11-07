@@ -6,11 +6,10 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity(name = "menu_item")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class MenuItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -7,11 +7,10 @@ import ru.liga.common.statuses.RestaurantStatus;
 import javax.persistence.*;
 
 @Entity(name = "restaurant")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Restaurant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

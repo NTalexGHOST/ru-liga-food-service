@@ -7,10 +7,8 @@ import lombok.*;
 import ru.liga.common.statuses.CourierStatus;
 
 @Schema(description = "DTO курьера")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class CourierDTO {
 
     @Schema(description = "Идентификатор")

@@ -6,11 +6,10 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity(name = "order_item")
-@Data
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

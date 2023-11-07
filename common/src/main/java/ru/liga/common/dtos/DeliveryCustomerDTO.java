@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import javax.validation.constraints.Email;
-
 @Schema(description = "DTO покупателя для сервиса доставки")
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor

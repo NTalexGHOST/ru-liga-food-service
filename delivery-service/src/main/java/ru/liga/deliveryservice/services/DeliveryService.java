@@ -64,6 +64,8 @@ public class DeliveryService {
 
         orderDTOs.forEach(orderDTO -> {
             BigDecimal payment = orderDTO.getItems().stream().map(OrderItemDTO::getPrice).reduce(BigDecimal::add).get();
+            //  Коэффициент оплаты курьеру в зависимости от стоимости заказа
+            payment = payment.multiply(BigDecimal.valueOf(0.1));
             orderDTO.setPayment(payment);
 
             String courierCoords = orderDTO.getCourier().getCoordinates();
