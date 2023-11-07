@@ -18,13 +18,15 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>dependency_bom</module>
 		<module>common</module>
 		<module>order-service</module>
 		<module>kitchen-service</module>
 		<module>delivery-service</module>
 		<module>notification-service</module>
 		<module>migration</module>
-		<module>dependency_bom</module>
+		<module>cloud-gateway</module>
+		<module>auth-service</module>
 	</modules>
 
 </project>

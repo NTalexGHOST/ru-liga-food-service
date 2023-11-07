@@ -145,6 +145,18 @@
 				<artifactId>springdoc-openapi-ui</artifactId>
 				<version>1.7.0</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-gateway</artifactId>
+				<version>3.0.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-oauth2-client</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
