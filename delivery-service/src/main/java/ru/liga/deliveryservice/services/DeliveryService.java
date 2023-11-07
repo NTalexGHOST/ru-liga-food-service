@@ -62,7 +62,7 @@ public class DeliveryService {
 
         List<DeliveryOrderDTO> orderDTOs = orderMapper.ordersToDeliveryOrderDTOs(orderEntities);
 
-        orderDTOs.forEach(orderDTO -> {
+        orderDTOs.stream().forEach(orderDTO -> {
             BigDecimal payment = orderDTO.getItems().stream().map(OrderItemDTO::getPrice).reduce(BigDecimal::add).get();
             //  Коэффициент оплаты курьеру в зависимости от стоимости заказа
             payment = payment.multiply(BigDecimal.valueOf(0.1));
