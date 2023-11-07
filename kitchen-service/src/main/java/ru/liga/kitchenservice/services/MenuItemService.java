@@ -15,7 +15,6 @@ import ru.liga.common.repos.MenuItemRepository;
 import ru.liga.common.repos.RestaurantRepository;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.RestaurantMenuResponse;
-import ru.liga.kitchenservice.dtos.MenuItemPriceDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
