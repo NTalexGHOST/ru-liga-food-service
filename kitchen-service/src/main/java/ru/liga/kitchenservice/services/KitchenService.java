@@ -89,7 +89,7 @@ public class KitchenService {
         //  Установление заказу статуса DELIVERY_PENDING и оповещение сервиса доставки о новом заказе
         String message = objectMapper.writeValueAsString(new OrderStatusDTO(id, OrderStatus.DELIVERY_PENDING));
         rabbit.sendMessage(message, "customers");
-        rabbit.sendMessage("Новый заказ [" + id + "] необходимо доставить заказчику", "couriers");
+        rabbit.sendMessage(id.toString(), "couriers");
 
         String responseString = "Заказ [" + id + "] успешно приготовлен";
         System.out.println(responseString); logger.info(responseString);

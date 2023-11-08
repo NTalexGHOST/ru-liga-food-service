@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class QueueListener {
@@ -17,6 +19,7 @@ public class QueueListener {
     @SneakyThrows
     public void processMyQueue(String message) {
 
-        System.out.println(message);
+        UUID id = UUID.fromString(message);
+        deliveryService.findCourierForOrder(id);
     }
 }
