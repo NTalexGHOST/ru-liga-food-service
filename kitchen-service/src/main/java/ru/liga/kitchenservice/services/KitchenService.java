@@ -76,4 +76,22 @@ public class KitchenService {
 
         return response;
     }
+
+    public ResponseEntity<String> completeOrder(UUID id) {
+
+        //  Получение текущего статуса заказа
+        ResponseEntity<String> response = getOrderStatus(id);
+        if (!response.getStatusCode().is2xxSuccessful()) return response;
+        OrderStatus orderStatus = OrderStatus.valueOf(response.getBody());
+
+        //  Возможно завершать заказы рестораном только со статусом KITCHEN_PREPARING
+        if(!orderStatus.equals(OrderStatus.KITCHEN_PREPARING))
+            return new ResponseEntity<>("Заказ [" + id + "] нельзя завершить", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        //  Установление заказу статуса DELIVERY_PENDING и оповещение сервиса доставки о новом заказе
+        response = orderFeign.changeOrderStatus(id, OrderStatus.DELIVERY_PENDING);
+        rabbit.sendMessage("Новый заказ [" + id + "] необходимо доставить заказчику", "couriers");
+
+        return response;
+    }
 }
