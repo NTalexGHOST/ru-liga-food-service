@@ -1,17 +1,20 @@
 package ru.liga.deliveryservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.geo.Point;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.DeliveryOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
+import ru.liga.common.dtos.OrderStatusDTO;
 import ru.liga.common.entities.Courier;
 import ru.liga.common.entities.CustomerOrder;
 import ru.liga.common.exceptions.CourierNotFoundException;
 import ru.liga.common.exceptions.NoOrdersException;
-import ru.liga.common.exceptions.OrderNotFoundException;
 import ru.liga.common.feign.OrderFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
@@ -19,10 +22,13 @@ import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
 import ru.liga.common.statuses.CourierStatus;
 import ru.liga.common.statuses.OrderStatus;
+import ru.liga.deliveryservice.producer.RabbitMQProducerServiceImpl;
+import ru.liga.deliveryservice.utility.DistanceCalculator;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,31 +40,54 @@ public class DeliveryService {
 
     private final OrderFeign orderFeign;
     private final OrderMapper orderMapper;
+    private final ObjectMapper objectMapper;
+    private final RabbitMQProducerServiceImpl rabbit;
 
-    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
+    @SneakyThrows
+    public ResponseEntity<String> takeOrder(UUID id) {
 
-        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, status);
+        //  Получение текущего статуса заказа
+        ResponseEntity<String> response = getOrderStatus(id);
+        if (!response.getStatusCode().is2xxSuccessful()) return response;
+        OrderStatus orderStatus = OrderStatus.valueOf(response.getBody());
 
-        return codeResponse;
+        //  Возможно взять доставку заказа только со статусом DELIVERY_PENDING
+        if(!orderStatus.equals(OrderStatus.DELIVERY_PENDING))
+            return new ResponseEntity<>("Нельзя взять доставку заказа [" + id + "]", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        //  Установление заказу статуса DELIVERY_DELIVERING
+        //  Еще существует статус DELIVERY_PICKING, но думаю он излишен и по своей сути дублирует DELIVERY_DELIVERING
+        String message = objectMapper.writeValueAsString(new OrderStatusDTO(id, OrderStatus.DELIVERY_DELIVERING));
+        rabbit.sendMessage(message, "customers");
+
+        return response;
     }
 
-    public CodeResponse changeCourierStatus(long id, CourierStatus status) {
+    @SneakyThrows
+    public ResponseEntity<String> completeOrder(UUID id) {
 
-        Courier courier;
-        Optional<Courier> optionalCourier = courierRepo.findFirstById(id);
-        if (optionalCourier.isPresent()) courier = optionalCourier.get();
-        else throw new CourierNotFoundException("Курьер с идентификатором " + id + " не найден");
+        //  Получение текущего статуса заказа
+        ResponseEntity<String> response = getOrderStatus(id);
+        if (!response.getStatusCode().is2xxSuccessful()) return response;
+        OrderStatus orderStatus = OrderStatus.valueOf(response.getBody());
 
-        courier.setStatus(status);
+        //  Возможно завершить доставку заказа только со статусом DELIVERY_DELIVERING
+        if(!orderStatus.equals(OrderStatus.DELIVERY_DELIVERING))
+            return new ResponseEntity<>("Нельзя завершить доставку заказа [" + id + "]", HttpStatus.INTERNAL_SERVER_ERROR);
 
-        return new CodeResponse("200 OK", "Статус курьера успешно изменен на " + status);
+        //  Установление заказу статуса DELIVERY_DELIVERING
+        //  Еще существует статус DELIVERY_PICKING, но думаю он излишен и по своей сути дублирует DELIVERY_DELIVERING
+        String message = objectMapper.writeValueAsString(new OrderStatusDTO(id, OrderStatus.DELIVERY_PENDING));
+        rabbit.sendMessage(message, "customers");
+
+        return response;
     }
 
-    public DeliveryOrdersResponse findAllDeliveries(OrderStatus status) {
+    public ResponseEntity<DeliveryOrdersResponse> findAllDeliveries() {
 
         List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(status);
         if (orderEntities.isEmpty())
-            throw new NoOrdersException("В базе данных нет заказов со статусом " + status);
+            return new ResponseEntity<>(new DeliveryOrdersResponse(), HttpStatus.NOT_FOUND);
 
         List<DeliveryOrderDTO> orderDTOs = orderMapper.ordersToDeliveryOrderDTOs(orderEntities);
 
@@ -70,46 +99,59 @@ public class DeliveryService {
 
             String courierCoords = orderDTO.getCourier().getCoordinates();
             String restaurantCoords = orderDTO.getRestaurant().getAddress();
-            orderDTO.getRestaurant().setDistance(calculateDistance(courierCoords, restaurantCoords));
+            orderDTO.getRestaurant().setDistance(DistanceCalculator.calculateDistance(courierCoords, restaurantCoords));
 
             String customerCoords = orderDTO.getCustomer().getAddress();
-            orderDTO.getCustomer().setDistance(calculateDistance(restaurantCoords, customerCoords));
+            orderDTO.getCustomer().setDistance(DistanceCalculator.calculateDistance(restaurantCoords, customerCoords));
         });
 
-        return new DeliveryOrdersResponse(orderDTOs, 0, 10);
+        return ResponseEntity.ok(new DeliveryOrdersResponse(orderDTOs, 0, 10));
     }
 
-    //  Использование формулы Ламберта для длинных линий
-    public double calculateDistance(String firstCoords, String secondCoords) {
+    /*
+    private void findCourierForOrder(CustomerOrder order){
 
-        int earthRadius = 6371;
+        String restaurantCoords = order.getRestaurant().getAddress();
+        List<Courier> freeCouriers = courierRepo.findAllByStatus(CourierStatus.FREE);
+        if (freeCouriers.isEmpty()) {
+            deliveryService.changeOrderStatus(order.getId(), OrderStatus.DELIVERY_DENIED);
+            throw new NoCouriersException("Все курьеры в данный момент заняты");
+        }
 
-        Point firstPoint = coordsToPoint(firstCoords);
-        Point secondPoint = coordsToPoint(secondCoords);
+        HashMap<Long, Double> distances = null;
+        freeCouriers.stream().forEach(courier -> distances.put(courier.getId(),
+                deliveryService.calculateDistance(restaurantCoords, courier.getCoordinates())));
 
-        double latitudeDifference = degreesToRadians(secondPoint.getX() - firstPoint.getX());
-        double longitudeDifference = degreesToRadians(secondPoint.getY() - firstPoint.getY());
+        double closestDistance = 0; long closestCourierId = 0;
+        for(Map.Entry<Long, Double> entry : distances.entrySet()) {
+            closestDistance = Math.min(closestDistance, entry.getValue());
+            closestCourierId = entry.getKey();
+        }
 
-        double firstLatitude = degreesToRadians(firstPoint.getX());
-        double secondLatitude = degreesToRadians(secondPoint.getX());
+        Courier courier;
+        Optional<Courier> optionalCourier = courierRepo.findFirstById(closestCourierId);
+        if (optionalCourier.isPresent()) courier = optionalCourier.get();
+        else throw new CourierNotFoundException("Курьер с идентификатором " + closestCourierId + " не найден");
 
-        double a = Math.pow(Math.sin(latitudeDifference / 2), 2) + Math.pow(Math.sin(longitudeDifference / 2), 2) *
-                Math.cos(firstLatitude) * Math.cos(secondLatitude);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        courier.setStatus(CourierStatus.BUSY);
+        courierRepo.save(courier);
 
-        return earthRadius * c;
+        deliveryService.changeOrderStatus(order.getId(), OrderStatus.DELIVERY_PICKING);
     }
+     */
+    private ResponseEntity<String> getOrderStatus(UUID id) {
 
-    private Point coordsToPoint(String coordsString) {
+        //  Получение текущего статуса заказа
+        ResponseEntity<String> response = orderFeign.getOrderStatus(id);
+        switch (response.getStatusCode()) {
+            case OK:
+                break;
+            case NOT_FOUND:
+                return new ResponseEntity<>("Заказ [" + id + "] не найден", HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>("Не удалось получить статус заказа [" + id + "]", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        coordsString = coordsString.replaceAll("() ", "");
-        String[] coords = coordsString.split(",");
-
-        return new Point(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
-    }
-
-    private double degreesToRadians(double degrees) {
-
-        return degrees * Math.PI / 180;
+        return response;
     }
 }

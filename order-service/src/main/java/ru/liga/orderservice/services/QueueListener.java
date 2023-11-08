@@ -1,22 +1,26 @@
 package ru.liga.orderservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
-import ru.liga.orderservice.producer.RabbitMQProducerServiceImpl;
+
+import ru.liga.common.dtos.OrderStatusDTO;
 
 
 @Service
 @RequiredArgsConstructor
 public class QueueListener {
 
-    private final RabbitMQProducerServiceImpl rabbit;
+    private final OrderService orderService;
+    private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    @RabbitListener(queues = "customers")
+    @RabbitListener(queues = "order-service")
     public void processMyQueue(String message) {
 
-        System.out.println(message);
+        OrderStatusDTO orderDTO = objectMapper.readValue(message, OrderStatusDTO.class);
+        orderService.changeOrderStatus(orderDTO.getId(), orderDTO.getStatus());
     }
 }

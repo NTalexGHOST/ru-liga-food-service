@@ -40,19 +40,19 @@ public class OrderRestController {
         return orderService.getOrderById(id);
     }
 
+    @Operation(summary = "Вернуть статус заказа")
+    @GetMapping("/order/{id}/status")
+    public ResponseEntity<String> getOrderStatus(@PathVariable("id") UUID orderId) {
+
+        return orderService.getOrderStatus(orderId);
+    }
+
     @Operation(summary = "Изменить статус заказа")
     @PutMapping("/order/{id}")
     public ResponseEntity<String> changeOrderStatus(@PathVariable("id") UUID orderId,
                                                     @RequestParam("status") OrderStatus orderStatus) {
 
         return orderService.changeOrderStatus(orderId, orderStatus);
-    }
-
-    @Operation(summary = "Изменить статус заказа")
-    @GetMapping("/order/{id}/status")
-    public ResponseEntity<String> getOrderStatus(@PathVariable("id") UUID orderId) {
-
-        return orderService.getOrderStatus(orderId);
     }
 
     @Operation(summary = "Оплатить заказ")

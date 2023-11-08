@@ -17,6 +17,7 @@ import ru.liga.common.entities.*;
 import ru.liga.common.exceptions.*;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
+import ru.liga.common.responses.DeliveryOrdersResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.common.statuses.RestaurantStatus;
 import ru.liga.orderservice.dtos.CreateOrderDTO;
@@ -63,6 +64,11 @@ public class OrderService {
         return ResponseEntity.ok(new CustomerOrdersResponse(fullOrderDTOs, 0, 10));
     }
 
+    public ResponseEntity<DeliveryOrdersResponse> getAllOrdersForDelivery() {
+
+        return ResponseEntity.ok(new DeliveryOrdersResponse());
+    }
+
     public FullOrderDTO getOrderById(UUID id) {
 
         CustomerOrder order;
@@ -83,6 +89,12 @@ public class OrderService {
         return ResponseEntity.ok(order.getStatus().toString());
     }
 
+    /**
+     * Метод изменяет статус заказа {@link OrderStatus}
+     * @param orderId - идентификатор заказа
+     * @param orderStatus - новый статус заказа
+     * @return возвращает информацию об успешности смены статуса
+     */
     public ResponseEntity<String> changeOrderStatus(UUID orderId, OrderStatus orderStatus) {
 
         CustomerOrder order;
@@ -91,20 +103,34 @@ public class OrderService {
         else return new ResponseEntity("Заказ [" + orderId + "] не найден", HttpStatus.NOT_FOUND);
         order.setStatus(orderStatus);
 
-        return ResponseEntity.ok("Статус заказа [" + orderId + "] успешно изменен на " + orderStatus);
+        String responseString = "Статус заказа [" + orderId + "] успешно изменен на " + orderStatus;
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
+    /**
+     * Метод отвечает за оплату только созданного заказа
+     * @param orderId - идентификатор заказа
+     * @return возвращает информацию об успешности оплаты заказа
+     */
     @SneakyThrows
     public ResponseEntity<String> payForOrder(UUID orderId) {
+
+        String responseString;
 
         //  Проверка на повторную оплату заказа
         OrderStatus orderStatus = OrderStatus.valueOf(getOrderStatus(orderId).getBody());
         switch (orderStatus) {
             case CUSTOMER_CREATED: break;
             case CUSTOMER_CANCELLED:
-                return new ResponseEntity("Заказ [" + orderId + "] отменен", HttpStatus.INTERNAL_SERVER_ERROR);
+                responseString = "Заказ [" + orderId + "] отменен";
+                System.out.println(responseString); logger.error(responseString);
+                return new ResponseEntity(responseString, HttpStatus.INTERNAL_SERVER_ERROR);
             default:
-                return new ResponseEntity("Заказ [" + orderId + "] уже оплачен", HttpStatus.INTERNAL_SERVER_ERROR);
+                responseString = "Заказ [" + orderId + "] уже оплачен";
+                System.out.println(responseString); logger.warn(responseString);
+                return new ResponseEntity(responseString, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         //  Проведение оплаты заказа, по сути заглушка платежной системы
@@ -115,10 +141,20 @@ public class OrderService {
         String message = objectMapper.writeValueAsString(getOrderById(orderId));
         rabbit.sendMessage(message, "restaurants");
 
-        return ResponseEntity.ok("Заказ [" + orderId + "] успешно оплачен");
+        responseString = "Заказ [" + orderId + "] успешно оплачен";
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
+    /**
+     * Метод отвечает за отмену только созданного или уже оплаченного заказа
+     * @param orderId - идентификатор заказа
+     * @return возвращает информацию об успешности отмены заказа
+     */
     public ResponseEntity<String> cancelOrder(UUID orderId) {
+
+        String responseString;
 
         OrderStatus orderStatus = OrderStatus.valueOf(getOrderStatus(orderId).getBody());
         switch (orderStatus) {
@@ -127,16 +163,22 @@ public class OrderService {
             case CUSTOMER_PAID:
                 break;
             case CUSTOMER_CANCELLED:
-                return new ResponseEntity("Заказ [" + orderId + "] уже отменен", HttpStatus.INTERNAL_SERVER_ERROR);
+                responseString = "Заказ [" + orderId + "] уже отменен";
+                System.out.println(responseString); logger.warn(responseString);
+                return new ResponseEntity(responseString, HttpStatus.INTERNAL_SERVER_ERROR);
             default:
-                return new ResponseEntity("Заказ [" + orderId + "] уже нельзя отменить",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                responseString = "Заказ [" + orderId + "] уже нельзя отменить";
+                System.out.println(responseString); logger.error(responseString);
+                return new ResponseEntity(responseString, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         ResponseEntity response = changeOrderStatus(orderId, OrderStatus.CUSTOMER_CANCELLED);
         if (!response.getStatusCode().is2xxSuccessful()) return response;
 
-        return ResponseEntity.ok("Заказ [" + orderId + "] успешно отменен");
+        responseString = "Заказ [" + orderId + "] успешно отменен";
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
     public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {

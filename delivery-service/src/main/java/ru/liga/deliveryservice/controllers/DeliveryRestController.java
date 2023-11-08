@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.liga.common.statuses.CourierStatus;
@@ -11,6 +12,8 @@ import ru.liga.common.statuses.OrderStatus;
 import ru.liga.deliveryservice.services.DeliveryService;
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
+
+import java.util.UUID;
 
 @Tag(name = "Контроллер сервиса доставки")
 @RestController
@@ -20,27 +23,25 @@ public class DeliveryRestController {
 
     private final DeliveryService deliveryService;
 
-    @Operation(summary = "Смена статуса заявки")
-    @PostMapping("/delivery/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeOrderStatus(@PathVariable("id") Long id, @RequestParam("status") OrderStatus status) {
-
-        return deliveryService.changeOrderStatus(id, status);
-    }
-
     @Operation(summary = "Получить информацию по доставке заказов")
-    @PostMapping("/deliveries")
+    @GetMapping("/deliveries")
     @ResponseStatus(HttpStatus.OK)
-    public DeliveryOrdersResponse getAllDeliveries(@RequestParam("status") OrderStatus status) {
+    public ResponseEntity<DeliveryOrdersResponse> getAllDeliveries() {
 
-        return deliveryService.findAllDeliveries(status);
+        return deliveryService.findAllDeliveries();
     }
 
-    @Operation(summary = "Сменить статус курьера")
-    @PostMapping("/courier/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public CodeResponse changeCourierStatus(@PathVariable("id") Long id, @RequestParam("status") CourierStatus status) {
+    @Operation(summary = "Принять доставку заказа")
+    @PutMapping("/delivery/{orderId}/take")
+    public ResponseEntity<String> takeOrder(@PathVariable("orderId") UUID orderId) {
 
-        return deliveryService.changeCourierStatus(id, status);
+        return deliveryService.takeOrder(orderId);
+    }
+
+    @Operation(summary = "Завершить доставку заказа")
+    @PutMapping("/delivery/{orderId}/complete")
+    public ResponseEntity<String> completeOrder(@PathVariable("orderId") UUID orderId) {
+
+        return deliveryService.completeOrder(orderId);
     }
 }
