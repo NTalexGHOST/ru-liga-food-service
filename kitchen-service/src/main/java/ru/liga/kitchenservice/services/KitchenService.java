@@ -46,7 +46,10 @@ public class KitchenService {
         String message = objectMapper.writeValueAsString(new OrderStatusDTO(id, OrderStatus.KITCHEN_PREPARING));
         rabbit.sendMessage(message, "customers");
 
-        return response;
+        String responseString = "Заказ [" + id + "] начали готовить";
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
     @SneakyThrows
@@ -65,7 +68,10 @@ public class KitchenService {
         String message = objectMapper.writeValueAsString(new OrderStatusDTO(id, OrderStatus.KITCHEN_DENIED));
         rabbit.sendMessage(message, "customers");
 
-        return response;
+        String responseString = "Заказ [" + id + "] успешно отклонен";
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
     @SneakyThrows
@@ -85,7 +91,10 @@ public class KitchenService {
         rabbit.sendMessage(message, "customers");
         rabbit.sendMessage("Новый заказ [" + id + "] необходимо доставить заказчику", "couriers");
 
-        return response;
+        String responseString = "Заказ [" + id + "] успешно приготовлен";
+        System.out.println(responseString); logger.info(responseString);
+
+        return ResponseEntity.ok(responseString);
     }
 
     private ResponseEntity<String> getOrderStatus(UUID id) {

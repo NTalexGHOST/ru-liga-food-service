@@ -11,23 +11,17 @@ import org.springframework.stereotype.Service;
 import ru.liga.common.dtos.DeliveryOrderDTO;
 import ru.liga.common.dtos.OrderItemDTO;
 import ru.liga.common.dtos.OrderStatusDTO;
-import ru.liga.common.entities.Courier;
 import ru.liga.common.entities.CustomerOrder;
-import ru.liga.common.exceptions.CourierNotFoundException;
-import ru.liga.common.exceptions.NoOrdersException;
 import ru.liga.common.feign.OrderFeign;
 import ru.liga.common.mappers.OrderMapper;
 import ru.liga.common.repos.*;
-import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.responses.DeliveryOrdersResponse;
-import ru.liga.common.statuses.CourierStatus;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.deliveryservice.producer.RabbitMQProducerServiceImpl;
 import ru.liga.deliveryservice.utility.DistanceCalculator;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -85,16 +79,20 @@ public class DeliveryService {
 
     public ResponseEntity<DeliveryOrdersResponse> findAllDeliveries() {
 
-        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(status);
+        List<CustomerOrder> orderEntities = orderRepo.findAllByStatus(OrderStatus.DELIVERY_PENDING);
         if (orderEntities.isEmpty())
             return new ResponseEntity<>(new DeliveryOrdersResponse(), HttpStatus.NOT_FOUND);
 
         List<DeliveryOrderDTO> orderDTOs = orderMapper.ordersToDeliveryOrderDTOs(orderEntities);
 
         orderDTOs.stream().forEach(orderDTO -> {
-            BigDecimal payment = orderDTO.getItems().stream().map(OrderItemDTO::getPrice).reduce(BigDecimal::add).get();
-            //  Коэффициент оплаты курьеру в зависимости от стоимости заказа
-            payment = payment.multiply(BigDecimal.valueOf(0.1));
+            //  Перемножение цены на кол-во каждой позиции для вычисления суммы заказа
+            List<BigDecimal> totalPrices = null;
+            orderDTO.getItems().stream().forEach(orderItemDTO ->
+                    totalPrices.add(orderItemDTO.getPrice().multiply(BigDecimal.valueOf(orderItemDTO.getQuantity()))
+            ));
+            //  Умножение суммы на коэффициент оплаты курьеру, к примеру 0.1 = 10% от стоимости заказа
+            BigDecimal payment = totalPrices.stream().reduce(BigDecimal::add).get().multiply(BigDecimal.valueOf(0.1));
             orderDTO.setPayment(payment);
 
             String courierCoords = orderDTO.getCourier().getCoordinates();
