@@ -1,6 +1,9 @@
 package ru.liga.orderservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ public class OrderService {
     private final CustomerRepository customerRepo;
     private final MenuItemRepository menuItemRepo;
 
+    private final ObjectMapper objectMapper;
     private final OrderMapper orderMapper;
     private final RabbitMQProducerServiceImpl rabbit;
 
@@ -90,6 +94,7 @@ public class OrderService {
         return ResponseEntity.ok("Статус заказа [" + orderId + "] успешно изменен на " + orderStatus);
     }
 
+    @SneakyThrows
     public ResponseEntity<String> payForOrder(UUID orderId) {
 
         //  Проверка на повторную оплату заказа
@@ -106,7 +111,9 @@ public class OrderService {
         ResponseEntity response = changeOrderStatus(orderId, OrderStatus.CUSTOMER_PAID);
         if (!response.getStatusCode().is2xxSuccessful()) return response;
 
-        //  Здесь будет отправление заказа через rabbit в kitchen-service
+        //  Отправление оповещения о новом заказе в ресторан
+        String message = objectMapper.writeValueAsString(getOrderById(orderId));
+        rabbit.sendMessage(message, "restaurants");
 
         return ResponseEntity.ok("Заказ [" + orderId + "] успешно оплачен");
     }

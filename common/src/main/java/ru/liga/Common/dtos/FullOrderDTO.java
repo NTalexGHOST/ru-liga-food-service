@@ -32,5 +32,5 @@ public class FullOrderDTO {
 
     @Schema(description = "Позиции в заказе")
     @JsonProperty("items")
-    private List<OrderItemDTO> items;
+    private List<FullOrderItemDTO> items;
 }

@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Schema(description = "DTO заказа для сервиса доставки")
 @Data @Getter @Setter
@@ -15,7 +16,7 @@ public class DeliveryOrderDTO {
 
     @Schema(description = "Идентификатор")
     @JsonProperty("order_id")
-    private long id;
+    private UUID id;
 
     @Schema(description = "Ресторан")
     @JsonProperty("restaurant")

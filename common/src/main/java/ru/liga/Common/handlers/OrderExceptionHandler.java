@@ -1,13 +1,12 @@
 package ru.liga.common.handlers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import ru.liga.common.exceptions.*;
-import ru.liga.common.responses.CodeResponse;
 
 /**
  * Класс обработчик, отвечающий за любые исключения, которые так
@@ -15,6 +14,15 @@ import ru.liga.common.responses.CodeResponse;
  */
 @ControllerAdvice
 public class OrderExceptionHandler {
+
+    /**
+     * Функция отвечает за обработку исключений типа {@link JsonProcessingException}
+     * @param e - отлавливаемое исключение
+     * Запрос, вызвавший исключение, возвращает код 500 INTERNAL_SERVER_ERROR
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(JsonProcessingException.class)
+    public void handleJsonProcessingException(JsonProcessingException e) { }
 
     /**
      * Функция отвечает за обработку исключений типа {@link OrderNotFoundException}

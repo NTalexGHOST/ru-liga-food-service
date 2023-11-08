@@ -6,6 +6,8 @@ import lombok.*;
 
 import ru.liga.common.statuses.CourierStatus;
 
+import java.util.UUID;
+
 @Schema(description = "DTO курьера")
 @Data @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -13,7 +15,7 @@ public class CourierDTO {
 
     @Schema(description = "Идентификатор")
     @JsonProperty("id")
-    private long id;
+    private UUID id;
 
     @Schema(description = "Номер телефона")
     @JsonProperty("phone")
