@@ -89,6 +89,47 @@ public class OrderService {
 
         return ResponseEntity.ok("Статус заказа [" + orderId + "] успешно изменен на " + orderStatus);
     }
+
+    public ResponseEntity<String> payForOrder(UUID orderId) {
+
+        //  Проверка на повторную оплату заказа
+        OrderStatus orderStatus = OrderStatus.valueOf(getOrderStatus(orderId).getBody());
+        switch (orderStatus) {
+            case CUSTOMER_CREATED: break;
+            case CUSTOMER_CANCELLED:
+                return new ResponseEntity("Заказ [" + orderId + "] отменен", HttpStatus.INTERNAL_SERVER_ERROR);
+            default:
+                return new ResponseEntity("Заказ [" + orderId + "] уже оплачен", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //  Проведение оплаты заказа, по сути заглушка платежной системы
+        ResponseEntity response = changeOrderStatus(orderId, OrderStatus.CUSTOMER_PAID);
+        if (!response.getStatusCode().is2xxSuccessful()) return response;
+
+        //  Здесь будет отправление заказа через rabbit в kitchen-service
+
+        return ResponseEntity.ok("Заказ [" + orderId + "] успешно оплачен");
+    }
+
+    public ResponseEntity<String> cancelOrder(UUID orderId) {
+
+        OrderStatus orderStatus = OrderStatus.valueOf(getOrderStatus(orderId).getBody());
+        switch (orderStatus) {
+            case CUSTOMER_CREATED:
+                break;
+            case CUSTOMER_PAID:
+                break;
+            case CUSTOMER_CANCELLED:
+                return new ResponseEntity("Заказ [" + orderId + "] уже отменен", HttpStatus.INTERNAL_SERVER_ERROR);
+            default:
+                return new ResponseEntity("Заказ [" + orderId + "] уже нельзя отменить",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        ResponseEntity response = changeOrderStatus(orderId, OrderStatus.CUSTOMER_CANCELLED);
+        if (!response.getStatusCode().is2xxSuccessful()) return response;
+
+        return ResponseEntity.ok("Заказ [" + orderId + "] успешно отменен");
     }
 
     public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {

@@ -53,6 +53,22 @@ public class OrderRestController {
 
         return orderService.getOrderStatus(orderId);
     }
+
+    @Operation(summary = "Оплатить заказ")
+    @PutMapping("/order/{id}/pay")
+    public ResponseEntity<String> payForOrder(@PathVariable("id") UUID orderId) {
+
+        return orderService.payForOrder(orderId);
+    }
+
+    @Operation(summary = "Отменить заказ")
+    @PutMapping("/order/{id}/cancel")
+    public ResponseEntity<String> cancelOrder(@PathVariable("id") UUID orderId) {
+
+        return orderService.cancelOrder(orderId);
+    }
+
+    @Operation(summary = "Создать заказ")
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {
