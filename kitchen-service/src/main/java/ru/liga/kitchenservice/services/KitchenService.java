@@ -1,73 +1,52 @@
 package ru.liga.kitchenservice.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import ru.liga.common.dtos.RestaurantOrderDTO;
-import ru.liga.common.entities.CustomerOrder;
-import ru.liga.common.entities.Restaurant;
-import ru.liga.common.exceptions.NoOrdersException;
-import ru.liga.common.exceptions.RestaurantNotFoundException;
 import ru.liga.common.feign.OrderFeign;
-import ru.liga.common.mappers.OrderMapper;
-import ru.liga.common.repos.*;
-import ru.liga.common.responses.CodeResponse;
-import ru.liga.common.responses.RestaurantOrdersResponse;
 import ru.liga.common.statuses.OrderStatus;
 import ru.liga.kitchenservice.producer.RabbitMQProducerServiceImpl;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
-@Service
+@Service @Slf4j
 @RequiredArgsConstructor
 @ComponentScan(basePackages = "ru.liga.common")
 public class KitchenService {
 
-    private final CustomerOrderRepository orderRepo;
-    private final RestaurantRepository restaurantRepo;
+    private final Logger logger = LoggerFactory.getLogger(KitchenService.class);
 
-    private final OrderMapper orderMapper;
     private final OrderFeign orderFeign;
     private final RabbitMQProducerServiceImpl rabbit;
 
-    public RestaurantOrdersResponse findAllOrders(OrderStatus status) {
+    public ResponseEntity<String> acceptOrder(UUID id) {
 
-        //  Временная заглушка для ресторана, так понимаю данная сущность тоже будет подкручиваться через Security
-        Restaurant restaurant; long restaurantId = 1;
-        Optional<Restaurant> optionalRestaurant = restaurantRepo.findFirstById(restaurantId);
-        if (optionalRestaurant.isPresent()) restaurant = optionalRestaurant.get();
-        else throw new RestaurantNotFoundException("Ресторан с идентификатором " + restaurantId + " не найден");;
+        ResponseEntity<String> response; OrderStatus orderStatus;
 
-        List<CustomerOrder> orderEntities = orderRepo.findAllByRestaurantAndStatus(restaurant, status);
-        if (orderEntities.isEmpty()) throw new NoOrdersException("В базе данных нет записей ни об одном заказе");
-
-        List<RestaurantOrderDTO> orderDTOs = orderMapper.ordersToRestaurantOrderDTOs(orderEntities);
-
-        return new RestaurantOrdersResponse(orderDTOs, 0, 10);
-    }
-
-    public CodeResponse changeOrderStatus(long id, OrderStatus status) {
-
-        CodeResponse codeResponse = orderFeign.changeOrderStatus(id, status);
-
-        switch (status) {
-            case DELIVERY_PENDING:
-                rabbit.sendMessage(Long.toString(id), "couriers");
+        //  Получение текущего статуса заказа
+        response = orderFeign.getOrderStatus(id); orderStatus = OrderStatus.valueOf(response.getBody());
+        switch (response.getStatusCode()) {
+            case OK:
                 break;
-            case KITCHEN_DENIED:
-                rabbit.sendMessage("Ваш заказ был отменен", "customers");
-                break;
+            case NOT_FOUND:
+                return new ResponseEntity("Заказ [" + id + "] не найден", HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity("Не удалось получить статус заказа [" + id + "]", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return codeResponse;
-    }
+        //  Возможно принимать заказы рестораном только со статусом CUSTOMER_PAID
+        if(!orderStatus.equals(OrderStatus.CUSTOMER_PAID))
+            return new ResponseEntity("Заказ [" + id + "] нельзя принять", HttpStatus.INTERNAL_SERVER_ERROR);
 
-    @RabbitListener(queues = "kitchen-service")
-    public void processMyQueue(String message) {
+        //  Еще существует статус KITCHEN_ACCEPTED, но думаю он излишен и по своей сути дублирует KITCHEN_PREPARING
+        response = orderFeign.changeOrderStatus(id, OrderStatus.KITCHEN_PREPARING);
 
-        System.out.println(message);
+        return response;
     }
 }

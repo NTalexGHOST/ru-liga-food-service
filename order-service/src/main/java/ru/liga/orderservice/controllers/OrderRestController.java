@@ -40,7 +40,7 @@ public class OrderRestController {
     }
 
     @Operation(summary = "Изменить статус заказа")
-    @PutMapping("/order/{id}/status")
+    @PutMapping("/order/{id}")
     public ResponseEntity<String> changeOrderStatus(@PathVariable("id") UUID orderId,
                                                     @RequestParam("status") OrderStatus orderStatus) {
 
