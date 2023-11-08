@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import ru.liga.common.dtos.OrderStatusDTO;
 
-
 @Service
 @RequiredArgsConstructor
 public class QueueListener {
@@ -22,6 +21,5 @@ public class QueueListener {
 
         OrderStatusDTO orderDTO = objectMapper.readValue(message, OrderStatusDTO.class);
         orderService.changeOrderStatus(orderDTO.getId(), orderDTO.getStatus());
-        System.out.println("Получил");
     }
 }
