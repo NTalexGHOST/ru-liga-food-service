@@ -17,5 +17,5 @@ public class ShortOrderItemDTO {
 
     @Schema(description = "Количество")
     @JsonProperty("quantity")
-    private byte quantity;
+    private int quantity;
 }

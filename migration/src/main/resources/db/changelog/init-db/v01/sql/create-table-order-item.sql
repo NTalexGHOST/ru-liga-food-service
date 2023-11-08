@@ -4,7 +4,7 @@ create table if not exists order_item
     order_id uuid not null,
     menu_item_id uuid not null,
     price decimal not null,
-    quantity smallint not null,
+    quantity int not null,
     constraint order_item_pk primary key (id),
     constraint order_fk foreign key(order_id) references customer_order(id)
 );

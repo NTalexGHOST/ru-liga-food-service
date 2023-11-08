@@ -47,6 +47,10 @@ public class RabbitConfiguration {
         Queue deliveryQueue = new Queue("delivery-service", false);
         Queue orderQueue = new Queue("order-service", false);
 
+        amqpAdmin().declareQueue(kitchenQueue);
+        amqpAdmin().declareQueue(deliveryQueue);
+        amqpAdmin().declareQueue(orderQueue);
+
         DirectExchange directExchange = new DirectExchange("directExchange");
 
         return new Declarables(kitchenQueue, deliveryQueue, directExchange,

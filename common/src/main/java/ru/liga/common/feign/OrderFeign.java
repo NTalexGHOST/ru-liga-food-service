@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Feign-интерфейс, отвечающий за отправление запросов к сервису заказа
  */
-@FeignClient(name = "order-service", url = "http://localhost:8084")
+@FeignClient(name = "order-service", url = "http://localhost:8084/order-service")
 public interface OrderFeign {
 
     /**

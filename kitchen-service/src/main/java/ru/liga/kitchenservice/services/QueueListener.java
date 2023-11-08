@@ -26,10 +26,7 @@ public class QueueListener {
         //  Формирование оповещения (можно сказать чека) о поступлении нового заказа в ресторан
         StringBuilder outputStringBuilder = new StringBuilder();
         outputStringBuilder.append("[" + orderDTO.getTimestamp() + "] Получен новый заказ [" + orderDTO.getId() + "]\n");
-        orderDTO.getItems().stream().forEach(orderItemDTO ->
-                outputStringBuilder.append("\t" + orderItemDTO.getName() + "\t|\t" + orderItemDTO.getQuantity() + "x\t|\t" +
-                orderItemDTO.getPrice().multiply(BigDecimal.valueOf(orderItemDTO.getQuantity())) + "р."));
-
+        orderDTO.getItems().stream().forEach(orderItemDTO -> outputStringBuilder.append("\t" + orderItemDTO.getName() + "\t|\t" + orderItemDTO.getQuantity() + "x\t|\t" + orderItemDTO.getPrice() + "р.\n"));
         System.out.println(outputStringBuilder);
     }
 }

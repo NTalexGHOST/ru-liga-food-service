@@ -101,7 +101,10 @@ public class OrderService {
         Optional<CustomerOrder> optionalOrder = orderRepo.findFirstById(orderId);
         if (optionalOrder.isPresent()) order = optionalOrder.get();
         else return new ResponseEntity("Заказ [" + orderId + "] не найден", HttpStatus.NOT_FOUND);
+
+        //  Установка статуса заказа и его сохранение
         order.setStatus(orderStatus);
+        orderRepo.save(order);
 
         String responseString = "Статус заказа [" + orderId + "] успешно изменен на " + orderStatus;
         System.out.println(responseString); logger.info(responseString);
@@ -222,7 +225,7 @@ public class OrderService {
         order.setTimestamp(new Timestamp(new Date().getTime()));
 
         //  Сохранение заказа в репозиторий для возможности добавления в него позиций
-        orderRepo.save(order);
+        orderRepo.saveAndFlush(order);
 
 
         //  Приступаем к созданию позиций заказа и его заполнению ими
@@ -236,7 +239,7 @@ public class OrderService {
                 orderItemId = UUID.randomUUID();
                 optionalOrderItem = orderItemRepo.findFirstById(orderItemId);
             } while (optionalOrderItem.isPresent());
-            order.setId(orderItemId);
+            orderItem.setId(orderItemId);
 
             orderItem.setOrder(order);
             orderItem.setMenuItem(menuItem);
@@ -252,8 +255,11 @@ public class OrderService {
         //  При этом можно задать какой-либо коэффициент в зависимости от расстояния курьера и покупателя до
         //  ресторана, ну и плюс к этому какое-нибудь среднее время приготовления заказа
         LocalTime estimatedTime = LocalTime.now().plusMinutes(30);
+        String estimatedTimeString;
+        if (estimatedTime.getMinute() < 10) estimatedTimeString = estimatedTime.getHour() + ":0" + estimatedTime.getMinute();
+        else estimatedTimeString = estimatedTime.getHour() + ":" + estimatedTime.getMinute();
 
         return new CreateOrderResponse(orderId, "*** URL для оплаты ***",
-                    estimatedTime.getHour() + ":" + estimatedTime.getMinute());
+                    estimatedTimeString);
     }
 }

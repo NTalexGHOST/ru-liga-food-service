@@ -25,7 +25,7 @@ public class FullOrderItemDTO {
 
     @Schema(description = "Количество")
     @JsonProperty("quantity")
-    private byte quantity;
+    private int quantity;
 
     @Schema(description = "Описание позиции")
     @JsonProperty("description")

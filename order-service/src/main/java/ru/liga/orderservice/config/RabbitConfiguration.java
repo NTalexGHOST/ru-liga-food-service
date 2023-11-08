@@ -44,6 +44,8 @@ public class RabbitConfiguration {
     public Declarables myQueue() {
 
         Queue restaurantsQueue = new Queue("restaurants", false);
+        amqpAdmin().declareQueue(restaurantsQueue);
+
         DirectExchange directExchange = new DirectExchange("directExchange");
 
         return new Declarables(restaurantsQueue, directExchange,

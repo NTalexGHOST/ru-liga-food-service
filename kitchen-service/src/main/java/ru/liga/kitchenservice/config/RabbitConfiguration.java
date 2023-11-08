@@ -45,6 +45,8 @@ public class RabbitConfiguration {
 
         Queue couriersQueue = new Queue("couriers", false);
         Queue customersQueue = new Queue("customers", false);
+        amqpAdmin().declareQueue(couriersQueue);
+        amqpAdmin().declareQueue(customersQueue);
 
         DirectExchange directExchange = new DirectExchange("directExchange");
 

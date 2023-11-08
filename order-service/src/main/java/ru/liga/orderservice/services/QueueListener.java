@@ -22,5 +22,6 @@ public class QueueListener {
 
         OrderStatusDTO orderDTO = objectMapper.readValue(message, OrderStatusDTO.class);
         orderService.changeOrderStatus(orderDTO.getId(), orderDTO.getStatus());
+        System.out.println("Получил");
     }
 }

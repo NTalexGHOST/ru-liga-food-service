@@ -72,7 +72,7 @@ public class OrderRestController {
     @Operation(summary = "Создать заказ")
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {
+    public CreateOrderResponse createOrder(@RequestBody CreateOrderDTO orderDTO) {
 
         return orderService.createOrder(orderDTO);
     }
