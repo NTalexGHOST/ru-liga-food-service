@@ -9,6 +9,7 @@ import ru.liga.common.entities.Restaurant;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 @Schema(description = "DTO заказа")
 @Data @Getter @Setter
@@ -17,7 +18,7 @@ public class FullOrderDTO {
 
     @Schema(description = "Идентификатор")
     @JsonProperty("id")
-    private long id;
+    private UUID id;
 
     @JsonIgnore
     private Restaurant restaurant;

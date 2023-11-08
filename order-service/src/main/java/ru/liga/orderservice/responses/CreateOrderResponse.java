@@ -7,14 +7,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Schema(description = "DTO для ответа после успешного создания заказа")
 @Data @Getter @Setter
 @AllArgsConstructor
-public class ConfirmOrderResponse {
+public class CreateOrderResponse {
 
     @Schema(description = "Идентификатор созданного заказа")
     @JsonProperty("id")
-    private long id;
+    private UUID id;
 
     @Schema(description = "URL для оплаты заказа")
     @JsonProperty("secret_payment_url")

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.liga.common.responses.CodeResponse;
 import ru.liga.common.statuses.OrderStatus;
-import ru.liga.orderservice.responses.ConfirmOrderResponse;
+import ru.liga.orderservice.dtos.CreateOrderDTO;
+import ru.liga.orderservice.responses.CreateOrderResponse;
 import ru.liga.orderservice.responses.CustomerOrdersResponse;
 import ru.liga.orderservice.services.OrderService;
 import ru.liga.common.dtos.FullOrderDTO;
@@ -49,8 +50,8 @@ public class OrderRestController {
     @Operation(summary = "Создание заказа")
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
-    public CodeResponse createOrder(@PathVariable("id") UUID id) {
+    public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {
 
-        return orderService.createOrder(id);
+        return orderService.createOrder(orderDTO);
     }
 }
