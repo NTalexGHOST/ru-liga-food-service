@@ -28,4 +28,11 @@ public class KitchenRestController {
 
         return kitchenService.acceptOrder(orderId);
     }
+
+    @Operation(summary = "Отклонить заказ")
+    @PostMapping("/kitchen/{orderId}/decline")
+    public ResponseEntity<String> declineOrder(@PathVariable("orderId") UUID orderId) {
+
+        return kitchenService.declineOrder(orderId);
+    }
 }
