@@ -24,14 +24,14 @@ public class OrderRestController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "Возврат списка заказов покупателя")
+    @Operation(summary = "Вернуть список заказов покупателя")
     @GetMapping("/orders")
     public ResponseEntity<CustomerOrdersResponse> getAllOrdersByCustomer() {
 
         return orderService.getAllOrdersByCustomer();
     }
 
-    @Operation(summary = "Возврат заказа по его id")
+    @Operation(summary = "Вернуть заказ по его id")
     @GetMapping("/order/{id}")
     @ResponseStatus(HttpStatus.OK)
     public FullOrderDTO getOrderById(@PathVariable("id") UUID id) {
@@ -39,15 +39,20 @@ public class OrderRestController {
         return orderService.getOrderById(id);
     }
 
-    @Operation(summary = "Смена статуса заказа")
-    @PutMapping("/order/{id}")
+    @Operation(summary = "Изменить статус заказа")
+    @PutMapping("/order/{id}/status")
     public ResponseEntity<String> changeOrderStatus(@PathVariable("id") UUID orderId,
                                                     @RequestParam("status") OrderStatus orderStatus) {
 
         return orderService.changeOrderStatus(orderId, orderStatus);
     }
 
-    @Operation(summary = "Создание заказа")
+    @Operation(summary = "Изменить статус заказа")
+    @GetMapping("/order/{id}/status")
+    public ResponseEntity<String> getOrderStatus(@PathVariable("id") UUID orderId) {
+
+        return orderService.getOrderStatus(orderId);
+    }
     @PostMapping("/order")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateOrderResponse createOrder(CreateOrderDTO orderDTO) {
